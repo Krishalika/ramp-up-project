@@ -3,7 +3,6 @@
 # ------------------------------------------------------
 
 type Student {
-  uuid: String!
   id: Int!
   name: String!
   gender: String!
@@ -15,11 +14,13 @@ type Student {
 
 type Query {
   getAllStudents: [Student!]!
+  getSingleStudent(id: Float!): Student!
 }
 
 type Mutation {
   createStudent(student: StudentCreateDTO!): Student!
   updateStudent(student: UpdateStudentInput!): Student!
+  deleteStudent(id: Float!): Student!
 }
 
 input StudentCreateDTO {
@@ -33,11 +34,11 @@ input StudentCreateDTO {
 }
 
 input UpdateStudentInput {
-  uuid: String!
   id: Int!
   name: String!
   gender: String!
   address: String!
   mobile: Int!
   dob: String!
+  age: Int!
 }

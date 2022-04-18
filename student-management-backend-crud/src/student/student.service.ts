@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { StudentCreateDTO } from './dto/create-student.input';
@@ -24,6 +24,21 @@ export class StudentService {
         let student: Student = this.studentRepository.create(updateStudentInput);
         student.id = id;
         return this.studentRepository.save(student);
+    }
+
+    async findOne(id: number): Promise<Student> {
+        return this.studentRepository.findOne(id);
+    }
+
+    async remove(id: number) {
+        let studentToRemove = this.findOne(id);
+        if (studentToRemove) {
+            let ret = await this.studentRepository.delete(id);
+            if (ret.affected === 1) {
+                return studentToRemove;
+            }
+        }
+        throw new NotFoundException(`Record cannot find by id ${id}`);
     }
 
 

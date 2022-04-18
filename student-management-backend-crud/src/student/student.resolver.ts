@@ -19,8 +19,18 @@ export class StudentResolver {
         return this.studentService.create(student);
     }
 
+    @Query(() => Student, { name: 'getSingleStudent' })
+    findOne(@Args('id') id: number) {
+        return this.studentService.findOne(id);
+    }
+
     @Mutation(() => Student, { name: "updateStudent" })
     updateProject(@Args('student') student: UpdateStudentInput) {
         return this.studentService.update(student.id, student);
+    }
+
+    @Mutation(() => Student, { name: "deleteStudent" })
+    removeStudent(@Args('id') id: number) {
+        return this.studentService.remove(id);
     }
 }
