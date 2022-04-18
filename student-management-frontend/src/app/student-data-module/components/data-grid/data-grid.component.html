@@ -1,0 +1,17 @@
+<kendo-grid (cellClick)="editHandler($event)" [data]="view" (add)="addHandler($event)">
+  <ng-template kendoGridToolbarTemplate>
+    <button kendoGridAddCommand *ngIf="!isInEditingMode">Add new</button>
+    <div *ngIf="isInEditingMode">
+      <button kendoButton [disabled]="!formGroup.valid" (click)="saveCurrent()">
+        Save
+      </button>
+      <button kendoButton themeColor="primary" (click)="cancelHandler()">
+        Cancel
+      </button>
+    </div>
+  </ng-template>
+  <kendo-grid-column field="id" title="ID"></kendo-grid-column>
+  <kendo-grid-column field="name" editor="numeric" title="Name"></kendo-grid-column>
+  <kendo-grid-column field="gender" editor="text" title="Gender"></kendo-grid-column>
+  <kendo-grid-column field="address" editor="text" title="Address"></kendo-grid-column>
+</kendo-grid>
