@@ -7,6 +7,8 @@ import { LayoutModule } from '@progress/kendo-angular-layout';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DataGridComponent } from './student-data-module/components/data-grid/data-grid.component';
 import { GridModule } from '@progress/kendo-angular-grid';
+import { GraphQLModule } from './graphql.module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { GridModule } from '@progress/kendo-angular-grid';
     AppRoutingModule,
     LayoutModule,
     BrowserAnimationsModule,
-    GridModule
+    GridModule,
+    GraphQLModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
