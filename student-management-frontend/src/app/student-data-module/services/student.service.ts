@@ -5,8 +5,8 @@ import { Student } from '../models/student.model';
 const Get_All_STUDENTS = gql`
 query{
   getAllStudents{
-    name
     id
+    name
     gender
     mobile
     dob
@@ -19,9 +19,22 @@ query{
 })
 export class StudentService {
 
-  private data: Student[] = [];
-  private counter: number = this.data.length;
+  // private data: Student[] = [];
+  // private counter: number = this.data.length;
+  allStudents: Student[] = [];
+  constructor(private apollo: Apollo) { }
 
+  public getAllStudents(): any[] {
+
+    this.apollo.watchQuery<any>({
+      query: Get_All_STUDENTS
+    })
+      .valueChanges.subscribe(({ data, loading }) => {
+        console.log(loading);
+        this.allStudents = data.getAllStudents;
+      })
+    return this.allStudents;
+  }
   // constructor(private apollo: Apollo) { }
   // private data: any[] = products; //products array
   // private counter: number = products.length;
@@ -35,9 +48,9 @@ export class StudentService {
   //       this.data = data.getAllStudents
   //     })
   // }
-  public products(): any[] {
-    return this.data;
-  }
+  // public products(): any[] {
+  //   return this.data;
+  // }
 
   // public remove(product: any): void {
   //   const index = this.data.findIndex(
