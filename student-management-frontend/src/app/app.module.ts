@@ -9,6 +9,8 @@ import { DataGridComponent } from './student-data-module/components/data-grid/da
 import { GridModule } from '@progress/kendo-angular-grid';
 import { GraphQLModule } from './graphql.module';
 import { HttpClientModule } from '@angular/common/http';
+import { studentReducer } from './student-data-module/store/reducers/student.reducer';
+import { StoreModule } from '@ngrx/store';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,10 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserAnimationsModule,
     GridModule,
     GraphQLModule,
-    HttpClientModule
+    HttpClientModule,
+    StoreModule.forRoot({
+      student: studentReducer
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent]

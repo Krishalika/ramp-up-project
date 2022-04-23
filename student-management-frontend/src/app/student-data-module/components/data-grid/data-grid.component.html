@@ -1,49 +1,35 @@
-<!-- <kendo-grid [data]="view" (add)="addHandler($event)">
+<kendo-grid [data]="allStudents" (add)="addHandler($event)">
+  <!-- <kendo-grid [data]="allStudents"> -->
+
   <ng-template kendoGridToolbarTemplate>
     <button kendoGridAddCommand *ngIf="!isInEditingMode">Add new</button>
-    <div *ngIf="isInEditingMode">
-      <button kendoButton [disabled]="!formGroup.valid" (click)="saveCurrent()">
+    <!-- <button kendoGridAddCommand >Add new</button> -->
+
+    <div>
+      <!-- <button kendoButton [disabled]="!formGroup.valid" (click)="saveCurrent()">
         Save
-      </button>
-      <button kendoButton themeColor="primary" (click)="cancelHandler()">
+      </button> -->
+      <!-- <button kendoButton themeColor="primary" (click)="cancelHandler()">
         Cancel
-      </button>
+      </button> -->
     </div>
   </ng-template>
   <kendo-grid-column field="id" title="ID"></kendo-grid-column>
-  <kendo-grid-column field="name" editor="numeric" title="Name"></kendo-grid-column>
+  <kendo-grid-column field="name" editor="text" title="Name"></kendo-grid-column>
   <kendo-grid-column field="gender" editor="text" title="Gender"></kendo-grid-column>
   <kendo-grid-column field="address" editor="text" title="Address"></kendo-grid-column>
-</kendo-grid> -->
-
-
-
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th scope="col">Id</th>
-      <th scope="col">Name</th>
-      <th scope="col">Mobile</th>
-      <th scope="col">DOB</th>
-      <th scope="col">Age</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let data of allStudents">
-      <td>{{data.id}}</td>
-      <td>{{data.name}}</td>
-      <td>{{data.mobile}}</td>
-      <td>{{data.dob}}</td>
-      <td>{{data.age}}</td>
-    </tr>
-  </tbody>
-</table>
-
-
-
+  <kendo-grid-column field="mobile" editor="text" title="Mobile No"></kendo-grid-column>
+  <kendo-grid-column field="dob" editor="text" title="Date of Birth"></kendo-grid-column>
+  <kendo-grid-column field="age" editor="text" title="Age" ></kendo-grid-column>
+  <kendo-grid-column title="Command">
+    <button kendoButton>
+      Edit
+    </button>
+    <button kendoButton>
+      Remove
+    </button>
+  </kendo-grid-column>
+</kendo-grid>
 
 <!-- <kendo-grid (cellClick)="editHandler($event)" [data]="view" (add)="addHandler($event)">
   <ng-template kendoGridToolbarTemplate>
@@ -62,3 +48,12 @@
   <kendo-grid-column field="gender" editor="text" title="Gender"></kendo-grid-column>
   <kendo-grid-column field="address" editor="text" title="Address"></kendo-grid-column>
 </kendo-grid> -->
+
+
+<!-- <tr *ngFor="let student of students | async"> -->
+
+<!-- <td>{{student.id}}</td>
+      <td>{{student.name}}</td>
+      <td>{{student.mobile}}</td>
+      <td>{{student.dob}}</td>
+      <td>{{student.age}}</td> -->

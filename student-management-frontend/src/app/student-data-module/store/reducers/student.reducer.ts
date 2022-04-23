@@ -4,7 +4,7 @@ import { Student } from "../../models/student.model";
 
 export const initialState: Student[] = [];
 
-export const cardReducer = createReducer(initialState,
+export const studentReducer = createReducer(initialState,
     on(addStudent, (state, { student }) => {
         return [student, ...state]
     }),
