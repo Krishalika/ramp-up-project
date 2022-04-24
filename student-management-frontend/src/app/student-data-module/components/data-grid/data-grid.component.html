@@ -6,12 +6,12 @@
     <!-- <button kendoGridAddCommand >Add new</button> -->
 
     <div>
-      <!-- <button kendoButton [disabled]="!formGroup.valid" (click)="saveCurrent()">
+      <button kendoButton [disabled]="!formGroup.valid" (click)="saveCurrent()">
         Save
-      </button> -->
-      <!-- <button kendoButton themeColor="primary" (click)="cancelHandler()">
+      </button>
+      <button kendoButton themeColor="primary" (click)="cancelHandler()">
         Cancel
-      </button> -->
+      </button>
     </div>
   </ng-template>
   <kendo-grid-column field="id" title="ID"></kendo-grid-column>
@@ -19,7 +19,7 @@
   <kendo-grid-column field="gender" editor="text" title="Gender"></kendo-grid-column>
   <kendo-grid-column field="address" editor="text" title="Address"></kendo-grid-column>
   <kendo-grid-column field="mobile" editor="text" title="Mobile No"></kendo-grid-column>
-  <kendo-grid-column field="dob" editor="text" title="Date of Birth"></kendo-grid-column>
+  <kendo-grid-column field="dob" editor="date" title="Date of Birth"></kendo-grid-column>
   <kendo-grid-column field="age" editor="text" title="Age" ></kendo-grid-column>
   <kendo-grid-column title="Command">
     <button kendoButton>

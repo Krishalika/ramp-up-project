@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AddEvent, GridComponent } from '@progress/kendo-angular-grid';
@@ -8,6 +8,7 @@ import { Student } from '../../models/student.model';
 import { StudentService } from '../../services/student.service';
 import { getStudents } from '../../store/actions/student.action';
 import { AppState } from '../../store/states/student.state';
+import * as moment from 'moment';
 
 const Get_All_STUDENTS = gql`
 query{
@@ -53,6 +54,7 @@ export class DataGridComponent implements OnInit {
   public formGroup!: FormGroup;
   private isNew = false;
   private editedRowIndex: number;
+  @ViewChild(GridComponent) private grid: GridComponent;
 
   constructor(private apollo: Apollo, private studentService: StudentService, private store: Store<AppState>) { }
 
@@ -102,8 +104,28 @@ export class DataGridComponent implements OnInit {
     this.editedRowIndex = undefined;
     this.formGroup = undefined;
   }
+  public cancelHandler(): void {
+      this.closeEditor(this.grid, this.editedRowIndex);
+  }
 
   public get isInEditingMode(): boolean {
     return this.editedRowIndex !== undefined || this.isNew;
   }
+
+  public saveCurrent() {
+    console.log("saved");
+    
+  }
+
+  public calculateAge(birthdate: any): number {
+    return moment().diff(birthdate, 'years');
+  }
+
+  getAge(birthDate: Date): number {
+    const ageTilNowInMilliseconds = Date.now() - birthDate.getTime();
+    const ageDate = new Date(ageTilNowInMilliseconds);
+    return Math.abs(ageDate.getUTCFullYear() - 1970); // Because computers count the today date from the 1st of January 1970
 }
+}
+
+
