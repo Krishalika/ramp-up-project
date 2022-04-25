@@ -1,9 +1,9 @@
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
+import { StudentModule } from './student/student.module';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
-import { StudentModule } from './student/student.module';
 
 @Module({
   imports: [StudentModule, GraphQLModule.forRoot<ApolloDriverConfig>(
@@ -21,6 +21,7 @@ import { StudentModule } from './student/student.module';
       database: 'student',
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
+      autoLoadEntities: true,
     })
   ],
   controllers: [],

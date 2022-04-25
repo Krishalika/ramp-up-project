@@ -1,8 +1,8 @@
+import { Student } from './entities/student.entity';
+import { StudentService } from './student.service';
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { StudentCreateDTO } from './dto/create-student.input';
 import { UpdateStudentInput } from './dto/update-student.input';
-import { Student } from './entities/student.entity';
-import { StudentService } from './student.service';
 
 @Resolver(() => Student)
 export class StudentResolver {
@@ -34,3 +34,4 @@ export class StudentResolver {
         return this.studentService.remove(id);
     }
 }
+
