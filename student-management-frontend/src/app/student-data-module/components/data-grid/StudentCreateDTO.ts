@@ -1,4 +1,4 @@
-export interface Student {
+export class StudentCreateDTO {
 
     id: number
     name: string
