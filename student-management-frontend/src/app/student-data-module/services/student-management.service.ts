@@ -28,6 +28,7 @@ export class StudentManagementService {
   public student: Student;
   constructor(private apollo: Apollo) { }
   public createdStudent: StudentType;
+  public updatedStudent: StudentType;
 
   public getAllStudents = () => {
     this.apollo.query({
@@ -76,6 +77,36 @@ export class StudentManagementService {
       variables: { student: studentToCreate }
     }).subscribe(result => {
       this.createdStudent = result.data as StudentType;
+    })
+  }
+
+  public updateStudent = (studentToUpdate: StudentCreateDTO, id: number) => {
+    this.apollo.mutate({
+      mutation: gql`mutation($student: StudentCreateDTO!, $studentId: Int!){
+        updateStudent(student: $student, id: $studentId){
+          id,
+          name,
+          gender,
+          address,
+          mobile,
+          dob,
+          age
+        }
+      }`,
+      variables: { student: studentToUpdate, studentId: id }
+    }).subscribe(result => {
+      this.updatedStudent = result.data as StudentType;
+    })
+  }
+
+  public deleteStudent = (id: number) => {
+    this.apollo.mutate({
+      mutation: gql`mutation($studentId: Int!){
+        deleteStudent(id: $studentId)
+       }`,
+      variables: { id: id }
+    }).subscribe(res => {
+      console.log(res.data);
     })
   }
 

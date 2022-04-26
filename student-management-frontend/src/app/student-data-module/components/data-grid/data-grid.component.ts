@@ -36,7 +36,7 @@ const formGroup = (dataItem) =>
       dataItem.mobile,
       Validators.compose([
         Validators.required,
-        // Validators.pattern("^[0-9]{1,3}"),
+        Validators.pattern("^[0-9]{1,11}"),
       ])
     ),
   });
@@ -59,7 +59,7 @@ export class DataGridComponent implements OnInit {
     private apollo: Apollo,
     private studentService: StudentManagementService,
     private store: Store<AppState>
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.apollo
@@ -90,10 +90,21 @@ export class DataGridComponent implements OnInit {
       age: parseInt(age),
     };
 
-    console.log(this.newStudent);
-
     this.studentService.createStudent(this.newStudent);
     this.clearForm();
+  }
+
+  public removeStudent() {
+    console.log("form group: ", this.formGroup);
+
+    const id = this.formGroup.value.id;
+
+    // this.formGroup = formGroup(dataItem);
+    this.studentService.deleteStudent(id);
+  }
+
+  editStudent() {
+    this.isInEditingMode
   }
 
   private clearForm(): void {

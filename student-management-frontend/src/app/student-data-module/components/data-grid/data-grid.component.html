@@ -1,21 +1,11 @@
-<kendo-grid [data]="allStudents" (add)="addHandler($event)">
-  <!-- <kendo-grid [data]="allStudents"> -->
+<kendo-grid [pageable]="true" [data]="allStudents" (add)="addHandler($event)">
 
   <ng-template kendoGridToolbarTemplate>
     <button kendoGridAddCommand *ngIf="!isInEditingMode">Add new</button>
-    <!-- <button kendoGridAddCommand >Add new</button> -->
-
-    <div>
-      <button kendoButton [disabled]="!formGroup.valid" (click)="saveCurrent()">
-
-      <!-- <button kendoButton (click)="saveCurrent()">-->
-        Save 
-      </button>
-      <button kendoButton themeColor="primary" (click)="cancelHandler()">
-        Cancel
-      </button>
-    </div>
+    <button kendoButton>Upload file</button>
   </ng-template>
+
+
   <kendo-grid-column field="id" title="ID"></kendo-grid-column>
   <kendo-grid-column field="name" editor="text" title="Name"></kendo-grid-column>
   <kendo-grid-column field="gender" editor="text" title="Gender"></kendo-grid-column>
@@ -24,14 +14,38 @@
   <kendo-grid-column field="dob" editor="date" title="Date of Birth"></kendo-grid-column>
   <kendo-grid-column field="age" editor="text" title="Age"></kendo-grid-column>
   <kendo-grid-column title="Command">
-    <button kendoButton>
-      Edit
-    </button>
-    <button kendoButton>
-      Remove
-    </button>
+
+    <ng-template kendoGridCellTemplate let-isNew="isNew">
+      <button kendoGridEditCommand (click)="editStudent()">Edit</button>
+      <!-- <button kendoGridEditCommand>Edit</button> -->
+
+      <button kendoGridRemoveCommand (click)="removeStudent()">Remove</button>
+      <button kendoGridSaveCommand (click)="saveCurrent()">Add</button>
+      <button kendoGridCancelCommand (click)="cancelHandler()">Discard changes</button>
+    </ng-template>
+
   </kendo-grid-column>
+
 </kendo-grid>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- <kendo-grid (cellClick)="editHandler($event)" [data]="view" (add)="addHandler($event)">
   <ng-template kendoGridToolbarTemplate>
