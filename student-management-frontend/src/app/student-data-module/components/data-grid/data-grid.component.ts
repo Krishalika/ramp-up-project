@@ -8,62 +8,21 @@ import { Student } from '../../models/student.model';
 import { AppState } from '../../store/states/student.state';
 import * as moment from 'moment';
 import { StudentManagementService } from '../../services/student-management.service';
-// import { Int } from "type-graphql";
 import { StudentCreateDTO } from '../../types/student.type';
 
 const Get_All_STUDENTS = gql`
-query{
-  getAllStudents{
-    id
-    name
-    gender
-    address
-    mobile
-    dob
-    age
-  }
-}
-`;
-
-const saveRegistration = gql`
-        mutation createStudent( 
-          $id: Int!
-          $name: String!
-          $gender: String!
-          $address: String!
-          $mobile: Int!
-          $dob: String!
-          $age: Int!
-        ) {
-          createStudent(
-            id: $id
-            name: $name
-            gender: $gender
-            address: $address
-            mobile: $mobile
-            dob: $dob
-            age: $age
-          ) 
-          {id
-          }
-        }
-      `;
-
-const ADD_ST = gql`
-    mutation createStudent($student: StudentCreateDTO!) {
-      createStudent(student: $student){
-    id
-    name
-    gender
-    address
-    mobile
-    dob
-    age
-      }
+  query {
+    getAllStudents {
+      id
+      name
+      gender
+      address
+      mobile
+      dob
+      age
     }
-    `;
-
-
+  }
+`;
 
 const formGroup = (dataItem) =>
   new FormGroup({
@@ -85,10 +44,9 @@ const formGroup = (dataItem) =>
 @Component({
   selector: 'app-data-grid',
   templateUrl: './data-grid.component.html',
-  styleUrls: ['./data-grid.component.scss']
+  styleUrls: ['./data-grid.component.scss'],
 })
 export class DataGridComponent implements OnInit {
-
   allStudents: Student[] = [];
   newStudent: StudentCreateDTO;
   students: Observable<Student[]>;
@@ -96,65 +54,50 @@ export class DataGridComponent implements OnInit {
   private isNew = false;
   private editedRowIndex: number;
   @ViewChild(GridComponent) private grid: GridComponent;
-  courses: Observable<Student[]>;
 
-  studentFormGroup = formGroup({
-    id: 0,
-    name: "",
-    gender: "",
-    address: "",
-    dob: "",
-    age: 0,
-    mobile: 0,
-  });
-  studentForms = {
-    id: 0,
-    name: "",
-    gender: "",
-    address: "",
-    dob: "",
-    age: 0,
-    mobile: 0,
-  };
-
-  constructor(private apollo: Apollo, private studentService: StudentManagementService, private store: Store<AppState>) { }
+  constructor(
+    private apollo: Apollo,
+    private studentService: StudentManagementService,
+    private store: Store<AppState>
+  ) {}
 
   ngOnInit(): void {
-
-    this.apollo.watchQuery<any>({
-      query: Get_All_STUDENTS
-    })
+    this.apollo
+      .watchQuery<any>({
+        query: Get_All_STUDENTS,
+      })
       .valueChanges.subscribe(({ data, loading }) => {
         console.log(loading);
         this.allStudents = data.getAllStudents;
-      })
-
+      });
   }
 
   public saveCurrent() {
-
-    // this.newStudent = {
-    //   id: 23,
-    //   name: "sample",
-    //   gender: "female",
-    //   address: "Colombo",
-    //   mobile: 781234568,
-    //   dob: "212324",
-    //   age: 12
-    // }
-
+    const id = this.formGroup.value.id;
+    const name = this.formGroup.value.name;
+    const gender = this.formGroup.value.gender;
+    const address = this.formGroup.value.address;
+    const mobile = this.formGroup.value.mobile;
+    const dob = this.formGroup.value.dob;
+    const age = this.formGroup.value.age;
     this.newStudent = {
-      id: this.studentForms.id,
-      name: this.studentForms.name,
-      gender: this.studentForms.gender,
-      address: this.studentForms.address,
-      mobile: this.studentForms.mobile,
-      dob: this.studentForms.dob,
-      age: this.studentForms.age
-    }
+      id: parseInt(id),
+      name: name,
+      gender: gender,
+      address: address,
+      mobile: parseInt(mobile),
+      dob: dob,
+      age: parseInt(age),
+    };
+
+    console.log(this.newStudent);
 
     this.studentService.createStudent(this.newStudent);
+    this.clearForm();
+  }
 
+  private clearForm(): void {
+    this.formGroup.reset();
   }
 
   public addHandler({ sender }: AddEvent): void {
@@ -162,10 +105,10 @@ export class DataGridComponent implements OnInit {
 
     this.formGroup = formGroup({
       id: 0,
-      name: "",
-      gender: "",
-      address: "",
-      dob: "",
+      name: '',
+      gender: '',
+      address: '',
+      dob: '',
       age: 0,
       mobile: 0,
     });
@@ -191,57 +134,6 @@ export class DataGridComponent implements OnInit {
     return this.editedRowIndex !== undefined || this.isNew;
   }
 
-
-
-  public save() {
-
-    this.apollo.mutate({
-      mutation: ADD_ST,
-      variables: this.newStudent
-    }).subscribe(({ data }) => {
-      console.log('got data', data);
-    }, (error) => {
-      console.log('there was an error sending the query', error);
-    });
-  }
-  //   this.apollo.mutate({
-  //     mutation: UPVOTE_POST,
-  //     variables: {
-  //       id: 23,
-  //       name: "sample",
-  //       gender: "female",
-  //       address: "Colombo",
-  //       mobile: 781234568,
-  //       dob: "212324",
-  //       age: 12
-  //     }
-  //   }).subscribe(({ data }) => {
-  //     console.log('got data', data);
-  //   }, (error) => {
-  //     console.log('there was an error sending the query', error);
-  //   });
-  // }
-
-  // this.apollo.mutate({
-  //   mutation: Post_SAVE_STUDENT,
-  //   variables: {
-  //     student: {
-  //       id: Number(this.studentForms.id),
-  //       address: this.studentForms.address,
-  //       age: Number(this.studentForms.age),
-  //       dob: this.studentForms.dob,
-  //       gender: this.studentForms.gender,
-  //       mobile: this.studentForms.mobile,
-  //       name: this.studentForms.name,
-  //     }
-  //   }
-  // }).subscribe(({ data }) => {
-  //   let students = Object.assign([], this.allStudents)
-  //   students.unshift(data["Save"]);
-  //   this.allStudents = students;
-  // })
-
-
   public calculateAge(birthdate: any): number {
     return moment().diff(birthdate, 'years');
   }
@@ -252,5 +144,3 @@ export class DataGridComponent implements OnInit {
     return Math.abs(ageDate.getUTCFullYear() - 1970); // Because computers count the today date from the 1st of January 1970
   }
 }
-
-
