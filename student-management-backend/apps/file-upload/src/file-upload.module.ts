@@ -11,8 +11,11 @@ import { FileUploadService } from './file-upload.service';
         port: 6379,
       },
     }),
+    BullModule.registerQueue({
+      name: 'upload-queue'
+    })
   ],
   controllers: [FileUploadController],
   providers: [FileUploadService],
 })
-export class FileUploadModule {}
+export class FileUploadModule { }
