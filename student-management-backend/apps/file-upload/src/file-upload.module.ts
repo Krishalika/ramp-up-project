@@ -4,18 +4,26 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UploadConsumer } from './file-upload.consumer';
 import { FileUploadController } from './file-upload.controller';
 import { FileProducerService } from './file-upload.service';
+import { MessageConsumer } from './message/message.consumer';
+import { MessageController } from './message/message.controller';
+import { MessageProducerService } from './message/message.producer.service';
 
 @Module({
   imports: [
     BullModule.forRoot({
       redis: {
         host: 'localhost',
-        port: 6379,
+        port: 5003,
       },
     }),
-    BullModule.registerQueue({
-      name: 'upload-queue'
-    }),
+    BullModule.registerQueue(
+      {
+        name: 'upload-queue'
+      },
+      {
+        name: 'message-queue',
+      }
+    ),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -28,7 +36,7 @@ import { FileProducerService } from './file-upload.service';
       autoLoadEntities: true,
     })
   ],
-  controllers: [FileUploadController],
-  providers: [FileProducerService, UploadConsumer],
+  controllers: [FileUploadController, MessageController],
+  providers: [FileProducerService, UploadConsumer, MessageProducerService, MessageConsumer],
 })
 export class FileUploadModule { }
