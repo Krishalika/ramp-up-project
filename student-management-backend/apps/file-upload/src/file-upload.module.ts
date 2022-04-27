@@ -1,7 +1,9 @@
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UploadConsumer } from './file-upload.consumer';
 import { FileUploadController } from './file-upload.controller';
-import { FileUploadService } from './file-upload.service';
+import { FileProducerService } from './file-upload.service';
 
 @Module({
   imports: [
@@ -13,9 +15,20 @@ import { FileUploadService } from './file-upload.service';
     }),
     BullModule.registerQueue({
       name: 'upload-queue'
+    }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'postgres',
+      password: 'root',
+      database: 'student',
+      entities: ['dist/**/*.entity{.ts,.js}'],
+      synchronize: true,
+      autoLoadEntities: true,
     })
   ],
   controllers: [FileUploadController],
-  providers: [FileUploadService],
+  providers: [FileProducerService, UploadConsumer],
 })
 export class FileUploadModule { }
