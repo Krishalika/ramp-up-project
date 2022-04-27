@@ -1,8 +1,9 @@
-<kendo-grid [pageable]="true" [data]="allStudents" (add)="addHandler($event)">
+<kendo-grid [pageable]="true" [data]="allStudents" (add)="addHandler($event)" (edit)="editHandler($event)"
+  (cancel)="canceledHandler($event)">
 
   <ng-template kendoGridToolbarTemplate>
     <button kendoGridAddCommand *ngIf="!isInEditingMode">Add new</button>
-    <button kendoButton>Upload file</button>
+    <!-- <button kendoButton>Upload file</button> -->
   </ng-template>
 
 
@@ -11,17 +12,29 @@
   <kendo-grid-column field="gender" editor="text" title="Gender"></kendo-grid-column>
   <kendo-grid-column field="address" editor="text" title="Address"></kendo-grid-column>
   <kendo-grid-column field="mobile" editor="text" title="Mobile No"></kendo-grid-column>
-  <kendo-grid-column field="dob" editor="date" title="Date of Birth"></kendo-grid-column>
+  <kendo-grid-column field="dob" editor="text" title="Date of Birth"></kendo-grid-column>
   <kendo-grid-column field="age" editor="text" title="Age"></kendo-grid-column>
   <kendo-grid-column title="Command">
 
     <ng-template kendoGridCellTemplate let-isNew="isNew" let-dataItem>
-      <button kendoGridEditCommand (click)="editStudent()">Edit</button>
+      <button kendoGridEditCommand (click)="editHandler($event)">Edit</button>
       <!-- <button kendoGridEditCommand>Edit</button> -->
+      <div *ngIf="isNew">
+        <button kendoGridSaveCommand (click)="saveCurrent()" [disabled]="formGroup?.invalid">Add</button>
+      </div>
+      <div *ngIf="!isNew">
+        <button kendoGridSaveCommand (click)="updateStudent(dataItem)" [disabled]="formGroup?.invalid">Update</button>
 
+      </div>
+      <!-- <button kendoGridSaveCommand (click)="saveCurrent()" [disabled]="formGroup?.invalid">
+        {{ isNew ? "Add" : "Update" }}
+      </button> -->
+      <button kendoGridCancelCommand (click)="cancelHandler()">
+        {{ isNew ? "Discard changes" : "Cancel" }}
+      </button>
       <button kendoGridRemoveCommand (click)="removeStudent(dataItem)">Remove</button>
-      <button kendoGridSaveCommand (click)="saveCurrent()">Add</button>
-      <button kendoGridCancelCommand (click)="cancelHandler()">Discard changes</button>
+      <!-- <button kendoGridSaveCommand (click)="saveCurrent()">Add</button> -->
+      <!-- <button kendoGridCancelCommand (click)="cancelHandler()">Discard changes</button> -->
     </ng-template>
 
   </kendo-grid-column>

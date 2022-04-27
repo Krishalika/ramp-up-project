@@ -3,7 +3,11 @@ import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { map } from 'rxjs/operators';
 import { Student } from '../models/student.model';
-import { StudentCreateDTO, StudentType } from '../types/student.type';
+import {
+  StudentCreateDTO,
+  StudentType,
+  UpdateStudentInput,
+} from '../types/student.type';
 
 const Get_All_STUDENTS = gql`
   query {
@@ -83,12 +87,12 @@ export class StudentManagementService {
       });
   };
 
-  public updateStudent = (studentToUpdate: StudentCreateDTO, id: number) => {
+  public updateStudent = (studentToUpdate: UpdateStudentInput) => {
     this.apollo
       .mutate({
         mutation: gql`
-          mutation ($student: StudentCreateDTO!, $id: Int!) {
-            updateStudent(student: $student, id: $id) {
+          mutation ($student: UpdateStudentInput!) {
+            updateStudent(student: $student) {
               id
               name
               gender
@@ -99,7 +103,7 @@ export class StudentManagementService {
             }
           }
         `,
-        variables: { student: studentToUpdate, studentId: id },
+        variables: { student: studentToUpdate },
       })
       .subscribe((result) => {
         this.updatedStudent = result.data as StudentType;

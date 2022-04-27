@@ -49,6 +49,7 @@ const formGroup = (dataItem) =>
 export class DataGridComponent implements OnInit {
   allStudents: Student[] = [];
   newStudent: StudentCreateDTO;
+  updatedStudent: StudentCreateDTO;
   students: Observable<Student[]>;
   public formGroup!: FormGroup;
   private isNew = false;
@@ -101,10 +102,50 @@ export class DataGridComponent implements OnInit {
     this.studentService.deleteStudent(parseInt(id));
   }
 
-  editStudent() {
-    // console.log(item);
+  public updateStudent(item) {
+    const id = item.id;
+    const name = item.name;
+    const gender = item.gender;
+    const address = item.address;
+    const mobile = item.mobile;
+    const dob = item.dob;
+    const age = item.age;
 
-    this.isInEditingMode;
+    console.log('ID is: ', item.id);
+
+    this.updatedStudent = {
+      id: parseInt(id),
+      name: name,
+      gender: gender,
+      address: address,
+      mobile: parseInt(mobile),
+      dob: dob,
+      age: parseInt(age),
+    };
+
+    this.studentService.updateStudent(this.updatedStudent);
+  }
+
+  editHandler({ sender, rowIndex, dataItem }) {
+    // define all editable fields validators and default values
+    const group = new FormGroup({
+      id: new FormControl(dataItem.id, Validators.required),
+      name: new FormControl(dataItem.name, Validators.required),
+      gender: new FormControl(dataItem.gender, Validators.required),
+      address: new FormControl(dataItem.address, Validators.required),
+      dob: new FormControl(dataItem.dob, Validators.required),
+      age: new FormControl(dataItem.age),
+      mobile: new FormControl(
+        dataItem.mobile,
+        Validators.compose([
+          Validators.required,
+          Validators.pattern('^[0-9]{1,11}'),
+        ])
+      ),
+    });
+
+    // put the row in edit mode, with the `FormGroup` build above
+    sender.editRow(rowIndex, group);
   }
 
   // editRow(row) {
@@ -136,6 +177,11 @@ export class DataGridComponent implements OnInit {
 
     this.isNew = true;
     sender.addRow(this.formGroup);
+  }
+
+  canceledHandler({ sender, rowIndex }) {
+    // close the editor for the given row
+    sender.closeRow(rowIndex);
   }
 
   private closeEditor(
