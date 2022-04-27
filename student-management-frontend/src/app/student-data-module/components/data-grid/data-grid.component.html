@@ -15,11 +15,11 @@
   <kendo-grid-column field="age" editor="text" title="Age"></kendo-grid-column>
   <kendo-grid-column title="Command">
 
-    <ng-template kendoGridCellTemplate let-isNew="isNew">
+    <ng-template kendoGridCellTemplate let-isNew="isNew" let-dataItem>
       <button kendoGridEditCommand (click)="editStudent()">Edit</button>
       <!-- <button kendoGridEditCommand>Edit</button> -->
 
-      <button kendoGridRemoveCommand (click)="removeStudent()">Remove</button>
+      <button kendoGridRemoveCommand (click)="removeStudent(dataItem)">Remove</button>
       <button kendoGridSaveCommand (click)="saveCurrent()">Add</button>
       <button kendoGridCancelCommand (click)="cancelHandler()">Discard changes</button>
     </ng-template>

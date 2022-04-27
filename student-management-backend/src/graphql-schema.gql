@@ -14,13 +14,13 @@ type Student {
 
 type Query {
   getAllStudents: [Student!]!
-  getSingleStudent(id: Float!): Student!
+  getSingleStudent(id: Int!): Student!
 }
 
 type Mutation {
   createStudent(student: StudentCreateDTO!): Student!
   updateStudent(student: UpdateStudentInput!): Student!
-  deleteStudent(id: Float!): Student!
+  deleteStudent(id: Int!): Student!
 }
 
 input StudentCreateDTO {
