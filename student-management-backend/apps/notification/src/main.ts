@@ -1,8 +1,12 @@
 import { NestFactory } from '@nestjs/core';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { NotificationModule } from './notification.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(NotificationModule);
-  await app.listen(5000);
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+    NotificationModule,
+    { transport: Transport.TCP },
+  );
+  app.listen();
 }
 bootstrap();
