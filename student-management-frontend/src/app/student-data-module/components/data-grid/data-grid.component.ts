@@ -9,6 +9,7 @@ import { AppState } from '../../store/states/student.state';
 import * as moment from 'moment';
 import { StudentManagementService } from '../../services/student-management.service';
 import { StudentCreateDTO } from '../../types/student.type';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 const Get_All_STUDENTS = gql`
   query {
@@ -56,10 +57,13 @@ export class DataGridComponent implements OnInit {
   private editedRowIndex: number;
   @ViewChild(GridComponent) private grid: GridComponent;
 
+  public notification: string = '';
+
   constructor(
     private apollo: Apollo,
     private studentService: StudentManagementService,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -92,13 +96,28 @@ export class DataGridComponent implements OnInit {
     };
 
     this.studentService.createStudent(this.newStudent);
+
+    this.studentService.receiveNotification().subscribe((message: string) => {
+      //-----------error
+      message = message;
+    });
+    // this.showNotification(message);
     this.clearForm();
+  }
+
+  public showNotification(customMessage: string): void {
+    this.notificationService.show({
+      content: customMessage,
+      // cssClass: 'button-notification',
+      animation: { type: 'slide', duration: 400 },
+      position: { horizontal: 'center', vertical: 'bottom' },
+      type: { style: 'success', icon: true },
+      closable: true,
+    });
   }
 
   public removeStudent(item) {
     const id = item.id;
-
-    // this.formGroup = formGroup(dataItem);
     this.studentService.deleteStudent(parseInt(id));
   }
 

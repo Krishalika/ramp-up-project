@@ -1,3 +1,3 @@
 export class CreateStudentEvent {
-  constructor(public readonly email: string) {}
+  constructor(public readonly id: string) {}
 }

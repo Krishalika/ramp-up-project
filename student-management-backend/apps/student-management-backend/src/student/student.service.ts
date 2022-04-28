@@ -23,7 +23,7 @@ export class StudentService {
     let studentToSave = this.studentRepository.create(student);
     this.notificationClient.emit(
       'student_created',
-      new CreateStudentEvent('krishalikar@gmail.com'),
+      new CreateStudentEvent(studentToSave.id.toString()),
     );
     return this.studentRepository.save(studentToSave);
   }

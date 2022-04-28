@@ -11,12 +11,13 @@ import { GraphQLModule } from './graphql.module';
 import { HttpClientModule } from '@angular/common/http';
 import { studentReducer } from './student-data-module/store/reducers/student.reducer';
 import { StoreModule } from '@ngrx/store';
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { NotificationModule } from '@progress/kendo-angular-notification';
+
+const config: SocketIoConfig = { url: 'http://localhost:4001', options: {} };
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    DataGridComponent
-  ],
+  declarations: [AppComponent, DataGridComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -25,11 +26,13 @@ import { StoreModule } from '@ngrx/store';
     GridModule,
     GraphQLModule,
     HttpClientModule,
+    SocketIoModule.forRoot(config),
     StoreModule.forRoot({
-      student: studentReducer
+      student: studentReducer,
     }),
+    NotificationModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
