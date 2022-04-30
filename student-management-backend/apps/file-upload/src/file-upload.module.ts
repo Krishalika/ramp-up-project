@@ -7,9 +7,10 @@ import { FileProducerService } from './file-upload.service';
 import { MessageConsumer } from './message/message.consumer';
 import { MessageController } from './message/message.controller';
 import { MessageProducerService } from './message/message.producer.service';
-
+import { CsvModule } from 'nest-csv-parser'
 @Module({
   imports: [
+    // CsvModule,
     BullModule.forRoot({
       redis: {
         host: 'localhost',

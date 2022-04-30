@@ -23,7 +23,6 @@ export class NotificationService {
   handleStudentCreated(data: CreateStudentEvent) {
     console.log('Created student record: ', data);
     return data;
-    //TODO -- email the user
     //TODO -- websocket implementation
   }
 

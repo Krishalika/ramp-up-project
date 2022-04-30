@@ -4,6 +4,9 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
+import { BullModule } from '@nestjs/bull';
+import { FileUploadController } from './file-upload/upload.controller';
+import { UploadQueueProducerService } from './file-upload/upload-queue.producer.service';
 
 @Module({
   imports: [
@@ -23,8 +26,19 @@ import { join } from 'path';
       synchronize: true,
       autoLoadEntities: true,
     }),
+    BullModule.forRoot({
+      redis: {
+        host: 'localhost',
+        port: 5003,
+      },
+    }),
+    BullModule.registerQueue(
+      {
+        name: 'upload-queue'
+      }
+    ),
   ],
-  controllers: [],
-  providers: [],
+  controllers: [FileUploadController],
+  providers: [UploadQueueProducerService],
 })
-export class AppModule {}
+export class AppModule { }

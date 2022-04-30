@@ -7,9 +7,7 @@ export class FileProducerService {
   constructor(@InjectQueue('upload-queue') private queue: Queue) { }
 
   async readFile(fileName: string) {
-    let filePath = `C:/F/files/${fileName}`;
-
-    // logic to save the file record in database.
+    let filePath = "./../Book1.csv";
     
     await this.queue.add('upload-job', {
       filePath: filePath
