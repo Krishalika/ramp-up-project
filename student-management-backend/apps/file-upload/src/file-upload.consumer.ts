@@ -4,7 +4,7 @@ import { readFileSync } from "fs";
 import { parse } from "path";
 import * as fs from 'fs';
 import gql from 'graphql-tag';
-import { CsvParser } from 'nest-csv-parser';
+// import { CsvParser } from 'nest-csv-parser';
 import { createConnection, getConnection } from "typeorm";
 import { StudentEntity } from "./student.entity";
 import "reflect-metadata";
