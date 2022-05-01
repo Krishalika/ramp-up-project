@@ -91,7 +91,7 @@ export class StudentManagementService {
         this.createdStudent = result.data as StudentType;
       });
 
-    console.log(this.receiveNotification);
+    console.log("Notification is: ",this.receiveNotification());
   };
 
   public updateStudent = (studentToUpdate: UpdateStudentInput) => {

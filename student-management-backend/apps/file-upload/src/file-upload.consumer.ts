@@ -1,7 +1,11 @@
 import { Process, Processor } from "@nestjs/bull";
 import { Job } from "bull";
 import { readFileSync } from "fs";
-import { createConnection } from "typeorm";
+import { parse } from "path";
+import * as fs from 'fs';
+import gql from 'graphql-tag';
+// import { CsvParser } from 'nest-csv-parser';
+import { createConnection, getConnection } from "typeorm";
 import { StudentEntity } from "./student.entity";
 import "reflect-metadata";
 export type StudentCreateDTO = {

@@ -10,6 +10,7 @@ import * as moment from 'moment';
 import { StudentManagementService } from '../../services/student-management.service';
 import { StudentCreateDTO } from '../../types/student.type';
 import { NotificationService } from '@progress/kendo-angular-notification';
+import { WebSocketService } from '../../services/websocket.service';
 
 const Get_All_STUDENTS = gql`
   query {
@@ -63,7 +64,8 @@ export class DataGridComponent implements OnInit {
     private apollo: Apollo,
     private studentService: StudentManagementService,
     private store: Store<AppState>,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private socketService: WebSocketService
   ) {}
 
   ngOnInit(): void {
@@ -97,10 +99,15 @@ export class DataGridComponent implements OnInit {
 
     this.studentService.createStudent(this.newStudent);
 
-    this.studentService.receiveNotification().subscribe((message: string) => {
-      //-----------error
-      message = message;
-    });
+    console.log(
+      'The printed msg: ',
+      this.socketService.notification$
+    );
+
+    // this.studentService.receiveNotification().subscribe((message: string) => {
+    //   //-----------error
+    //   message = message;
+    // });
     // this.showNotification(message);
     this.clearForm();
   }
