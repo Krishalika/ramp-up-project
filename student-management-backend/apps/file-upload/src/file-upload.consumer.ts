@@ -72,8 +72,22 @@ export class UploadConsumer {
         ])
         .execute();
     } catch (e) {
-      console.log('Error is saving: ', e);
-    }
+      console.log('Error is saving: ', e); }
+        
+
+        // createConnection().then(async connection => {
+
+        //     // INSERT USER
+        //     await connection.createQueryBuilder()
+        //         .insert()
+        //         .into(StudentEntity)
+        //         .values([
+        //             { id: 1, name: "Name1", gender: "Male", address: "Colombo", mobile: 713066355, dob: "Mon 13 Jan 1998", age: 24 },
+        //             { id: 2, name: "Name2", gender: "Female", address: "Gampaha", mobile: 713066355, dob: "Mon 13 Jan 1998", age: 24 }
+        //         ])
+        //         .execute();
+        // }).catch(error => console.log(error));
+    
     //     createConnection()
     //       .then(async (connection) => {
     //         // INSERT USER
