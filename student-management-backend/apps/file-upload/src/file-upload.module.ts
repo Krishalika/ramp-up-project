@@ -7,6 +7,7 @@ import { FileProducerService } from './file-upload.service';
 import { MessageConsumer } from './message/message.consumer';
 import { MessageController } from './message/message.controller';
 import { MessageProducerService } from './message/message.producer.service';
+import { StudentEntity } from './student.entity';
 
 @Module({
   imports: [
@@ -19,25 +20,32 @@ import { MessageProducerService } from './message/message.producer.service';
     }),
     BullModule.registerQueue(
       {
-        name: 'upload-queue'
+        name: 'upload-queue',
       },
       {
         name: 'message-queue',
-      }
+      },
     ),
     TypeOrmModule.forRoot({
+      // name: 'upload',
       type: 'postgres',
       host: 'localhost',
       port: 5432,
       username: 'postgres',
       password: 'root',
       database: 'student',
-      entities: ['dist/**/*.entity{.ts,.js}'],
+      entities: ["src/**/*.entity{.ts,.js}"],
+      // entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
       autoLoadEntities: true,
-    })
+    }),
   ],
   controllers: [FileUploadController, MessageController],
-  providers: [FileProducerService, UploadConsumer, MessageProducerService, MessageConsumer],
+  providers: [
+    FileProducerService,
+    UploadConsumer,
+    MessageProducerService,
+    MessageConsumer,
+  ],
 })
-export class FileUploadModule { }
+export class FileUploadModule {}
