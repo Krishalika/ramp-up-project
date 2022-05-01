@@ -1,11 +1,7 @@
 import { Process, Processor } from "@nestjs/bull";
 import { Job } from "bull";
 import { readFileSync } from "fs";
-import { parse } from "path";
-import * as fs from 'fs';
-import gql from 'graphql-tag';
-import { CsvParser } from 'nest-csv-parser';
-import { createConnection, getConnection } from "typeorm";
+import { createConnection } from "typeorm";
 import { StudentEntity } from "./student.entity";
 import "reflect-metadata";
 export type StudentCreateDTO = {
@@ -60,15 +56,6 @@ export class UploadConsumer {
         });
         console.log(this.allRows);
 
-        // await getConnection()
-        //     .createQueryBuilder()
-        //     .insert()
-        //     .into(StudentEntity)
-        //     .values([
-        //         { id: 1, name: "Name1", gender: "Male", address: "Colombo", mobile: 713066355, dob: "Mon 13 Jan 1998", age: 24 },
-        //         { id: 2, name: "Name2", gender: "Female", address: "Gampaha", mobile: 713066355, dob: "Mon 13 Jan 1998", age: 24 }
-        //     ])
-        //     .execute();
         createConnection().then(async connection => {
 
             // INSERT USER

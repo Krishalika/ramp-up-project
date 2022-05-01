@@ -14,9 +14,9 @@ const options = {
   },
 };
 
-@WebSocketGateway(options)
+// @WebSocketGateway(options)
 @Injectable()
-// @WebSocketGateway(4001)
+@WebSocketGateway(4001)
 export class NotificationService {
   @WebSocketServer() server;
   wsClients = [];
