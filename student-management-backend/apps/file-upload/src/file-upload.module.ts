@@ -35,7 +35,6 @@ import { StudentEntity } from './student.entity';
       password: 'root',
       database: 'student',
       entities: ["src/**/*.entity{.ts,.js}"],
-      // entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
       autoLoadEntities: true,
     }),

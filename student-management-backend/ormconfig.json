@@ -6,7 +6,7 @@
     "password": "root",
     "database": "student",
     "entities": [
-        "**/src/**/*.entity{.ts,.js}"
+        "*/**/src/**/*.entity{.ts,.js}"
     ],
     "synchronize": true,
     "autoLoadEntities": true,
