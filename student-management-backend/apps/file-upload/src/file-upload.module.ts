@@ -1,5 +1,6 @@
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UploadConsumer } from './file-upload.consumer';
 import { FileUploadController } from './file-upload.controller';
@@ -8,10 +9,17 @@ import { MessageConsumer } from './message/message.consumer';
 import { MessageController } from './message/message.controller';
 import { MessageProducerService } from './message/message.producer.service';
 import { StudentEntity } from './student.entity';
+import { StudentRepository } from './student.repository';
 
 @Module({
   imports: [
-    // CsvModule,
+    // TypeOrmModule.forFeature([StudentEntity]),
+    ClientsModule.register([
+      {
+        name: 'NOTIFICATION',
+        transport: Transport.TCP,
+      },
+    ]),
     BullModule.forRoot({
       redis: {
         host: 'localhost',
@@ -27,14 +35,14 @@ import { StudentEntity } from './student.entity';
       },
     ),
     TypeOrmModule.forRoot({
-      // name: 'upload',
+      name: 'upload',
       type: 'postgres',
       host: 'localhost',
       port: 5432,
       username: 'postgres',
       password: 'root',
       database: 'student',
-      entities: ["src/**/*.entity{.ts,.js}"],
+      entities: [StudentEntity],
       synchronize: true,
       autoLoadEntities: true,
     }),
@@ -45,6 +53,7 @@ import { StudentEntity } from './student.entity';
     UploadConsumer,
     MessageProducerService,
     MessageConsumer,
+    StudentRepository,
   ],
 })
 export class FileUploadModule {}

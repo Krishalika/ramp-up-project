@@ -5,6 +5,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { CreateStudentEvent } from 'apps/student-management-backend/src/student/events/create-student.event';
+import { UploadFileEvent } from './events/upload-file.event';
 
 const options = {
   cors: {
@@ -23,6 +24,10 @@ export class NotificationService {
   wsClients = [];
   private logger: Logger = new Logger('NotificationService');
 
+  handleFileProcessed(data: UploadFileEvent) {
+    console.log('File processed successfully ', data);
+  }
+
   @SubscribeMessage('client')
   handleStudentCreated(data: CreateStudentEvent) {
     console.log('Created student record: ', data);
@@ -31,8 +36,7 @@ export class NotificationService {
     // return data;
     this.broadcast('client', this.handleStudentCreated);
 
-    //TODO -- email the user
-    //TODO -- websocket implementation
+    //TODO -- websocket send notification
   }
 
   private broadcast(event, message: any) {
