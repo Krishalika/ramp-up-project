@@ -13,11 +13,12 @@ import { studentReducer } from './student-data-module/store/reducers/student.red
 import { StoreModule } from '@ngrx/store';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { NotificationModule } from '@progress/kendo-angular-notification';
+import { FileUploadComponent } from './student-data-module/components/file-upload/file-upload.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:4001', options: {} };
 
 @NgModule({
-  declarations: [AppComponent, DataGridComponent],
+  declarations: [AppComponent, DataGridComponent, FileUploadComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

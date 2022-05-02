@@ -25,7 +25,14 @@ export class NotificationService {
   private logger: Logger = new Logger('NotificationService');
 
   handleFileProcessed(data: UploadFileEvent) {
-    console.log('File processed successfully ', data);
+    console.log('File process status: ', data.msg);
+    try {
+      this.server.emit('messages', data.msg);
+      console.log("Trying to pass...");
+      
+    } catch (e) {
+      console.log('Exception in notify: ', e);
+    }
   }
 
   @SubscribeMessage('client')

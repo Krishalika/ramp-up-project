@@ -63,10 +63,15 @@ export class UploadConsumer {
       //send message to notification service
       this.notificationClient.emit(
         'file_processed',
-        new UploadFileEvent('File processed'),
+        new UploadFileEvent('File processed successfully'),
       );
     } catch (e) {
       console.log('Error in saving: ', e);
+
+      this.notificationClient.emit(
+        'file_processed',
+        new UploadFileEvent('Error in file processing'),
+      );
     }
   }
 }

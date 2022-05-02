@@ -11,6 +11,7 @@ import { StudentManagementService } from '../../services/student-management.serv
 import { StudentCreateDTO } from '../../types/student.type';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { WebSocketService } from '../../services/websocket.service';
+import { NotificationFEService } from '../../services/notificationfe.service';
 
 const Get_All_STUDENTS = gql`
   query {
@@ -59,13 +60,14 @@ export class DataGridComponent implements OnInit {
   @ViewChild(GridComponent) private grid: GridComponent;
 
   public notification: string = '';
-
+  messages: string[] = [];
   constructor(
     private apollo: Apollo,
     private studentService: StudentManagementService,
     private store: Store<AppState>,
     private notificationService: NotificationService,
-    private socketService: WebSocketService
+    private socketService: WebSocketService,
+    private notifyService: NotificationFEService
   ) {}
 
   ngOnInit(): void {
@@ -77,6 +79,14 @@ export class DataGridComponent implements OnInit {
         console.log(loading);
         this.allStudents = data.getAllStudents;
       });
+
+    this.notifyService.listenForMessages().subscribe((message) => {
+      this.messages.push(message);
+      console.log("Message is: ",message);
+      
+      console.log(this.messages);
+      
+    });
   }
 
   public saveCurrent() {
@@ -99,10 +109,7 @@ export class DataGridComponent implements OnInit {
 
     this.studentService.createStudent(this.newStudent);
 
-    console.log(
-      'The printed msg: ',
-      this.socketService.notification$
-    );
+    console.log('The printed msg: ', this.socketService.notification$);
 
     // this.studentService.receiveNotification().subscribe((message: string) => {
     //   //-----------error

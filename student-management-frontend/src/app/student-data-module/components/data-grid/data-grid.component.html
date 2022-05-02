@@ -1,3 +1,5 @@
+<p>Hello</p>
+<h4 *ngFor="let message of messages">{{message}}</h4>
 <kendo-grid [pageable]="true" [data]="allStudents" (add)="addHandler($event)" (edit)="editHandler($event)"
   (cancel)="canceledHandler($event)">
 
