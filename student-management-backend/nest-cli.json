@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/student-management-backend/src",
+  "monorepo": true,
+  "root": "apps/student-management-backend",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/student-management-backend/tsconfig.app.json"
+  },
+  "projects": {
+    "student-management-backend": {
+      "type": "application",
+      "root": "apps/student-management-backend",
+      "entryFile": "main",
+      "sourceRoot": "apps/student-management-backend/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/student-management-backend/tsconfig.app.json"
+      }
+    },
+    "crud": {
+      "type": "application",
+      "root": "apps/crud",
+      "entryFile": "main",
+      "sourceRoot": "apps/crud/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/crud/tsconfig.app.json"
+      }
+    },
+    "file-upload": {
+      "type": "application",
+      "root": "apps/file-upload",
+      "entryFile": "main",
+      "sourceRoot": "apps/file-upload/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/file-upload/tsconfig.app.json"
+      }
+    },
+    "notification": {
+      "type": "application",
+      "root": "apps/notification",
+      "entryFile": "main",
+      "sourceRoot": "apps/notification/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/notification/tsconfig.app.json"
+      }
+    }
+  }
+}
