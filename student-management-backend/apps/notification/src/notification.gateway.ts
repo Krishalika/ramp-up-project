@@ -1,52 +1,45 @@
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
+  OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { Logger } from '@nestjs/common';
+import { NotificationService } from './notification.service';
 
-//@WebSocketGateway(4001) //--> to make use of socket.io
-//   implements OnGatewayConnection, OnGatewayDisconnect
-export class NotificationGateway {
+@WebSocketGateway({ cors: true })
+export class NotificationGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect{
   @WebSocketServer() server;
 
-  wsClients = [];
-  //   users: number = 0;
+  private logger: Logger = new Logger('NotificationService');
 
-  /* async handleConnection() {
-    //a client has connected
-    this.users++;
+  constructor(private service: NotificationService) {}
 
-    //notify connected clients of current users
-    this.server.emit('users', this.users);
+  handleConnection(client: any, ...args: any[]) {
+    console.log("Connected");
+    
+  }
+  handleDisconnect(client: any) {
+    console.log("disconnected");
+    
+  }
+  afterInit(server: any) {
+    console.log("initiated");
+    
   }
 
-  async handleDisconnect() {
-    //a client has disconnected
-    this.users--;
-
-    //notify connected clients of current users
-    this.server.emit('users', this.users);
-  }
-  */
-
-  private broadcast(event, message: any) {
-    const broadCastMessage = JSON.stringify(message);
-    for (let c of this.wsClients) {
-      c.send(event, broadCastMessage);
+  @SubscribeMessage("test")
+  handleFileProcessed(client:any, data:any) {
+    try {
+      this.server.emit('messages', data);
+    } catch (e) {
+      console.log('Exception: ', e);
     }
   }
 
-  @SubscribeMessage('notification')
-  onChgEvent(client: any, payload: any) {
-    this.broadcast('notification', payload);
-  }
-
-  //listen the incoming messages
-  @SubscribeMessage('notification')
-  async onChat(client, message) {
-    //broadcast -> to receive data for all subscribed clients
-    client.broadcast.emit('notification', message);
+  handleStudentCreated() {
+    this.server.emit('client', this.service.handleStudentCreated);
   }
 }

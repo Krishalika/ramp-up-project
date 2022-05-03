@@ -8,12 +8,14 @@ import { Observable } from 'rxjs';
 export class NotificationFEService {
   constructor(private socket: Socket) {}
 
-  sendMessage(msg: string): void {
-    //'message' -> same name in be @SubscribeMessage
-    this.socket.emit('message', msg);
-  }
-
   listenForMessages(): Observable<string> {
     return this.socket.fromEvent<string>('messages');
   }
+
+  
+  sendMessage(msg: string): void {
+    this.socket.emit('message', msg);
+  }
+
+ 
 }

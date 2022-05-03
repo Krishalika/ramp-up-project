@@ -64,10 +64,8 @@ export class DataGridComponent implements OnInit {
   constructor(
     private apollo: Apollo,
     private studentService: StudentManagementService,
-    private store: Store<AppState>,
     private notificationService: NotificationService,
-    private socketService: WebSocketService,
-    private notifyService: NotificationFEService
+    private socketService: WebSocketService
   ) {}
 
   ngOnInit(): void {
@@ -80,12 +78,8 @@ export class DataGridComponent implements OnInit {
         this.allStudents = data.getAllStudents;
       });
 
-    this.notifyService.listenForMessages().subscribe((message) => {
-      this.messages.push(message);
-      console.log("Message is: ",message);
-      
-      console.log(this.messages);
-      
+    this.socketService.listenForMessages().subscribe((message) => {
+      console.log('Incoming notification: ', message);
     });
   }
 
@@ -109,13 +103,12 @@ export class DataGridComponent implements OnInit {
 
     this.studentService.createStudent(this.newStudent);
 
-    console.log('The printed msg: ', this.socketService.notification$);
-
-    // this.studentService.receiveNotification().subscribe((message: string) => {
-    //   //-----------error
-    //   message = message;
-    // });
-    // this.showNotification(message);
+    console.log(
+      'The printed msg: ',
+      this.socketService.notification$.subscribe((message) => {
+        console.log(message);
+      })
+    );
     this.clearForm();
   }
 

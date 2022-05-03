@@ -9,9 +9,6 @@ async function bootstrap() {
     NotificationModule,
     {
       transport: Transport.TCP,
-      // options: {
-      //   port: 4001,
-      // },
     },
   );
   app.listen();

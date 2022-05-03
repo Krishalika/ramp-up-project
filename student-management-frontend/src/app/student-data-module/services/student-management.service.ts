@@ -30,7 +30,7 @@ const Get_All_STUDENTS = gql`
 export class StudentManagementService {
   allStudents: Student[] = [];
   public student: Student;
-  constructor(private apollo: Apollo, private socket: Socket) {}
+  constructor(private apollo: Apollo) {}
   public createdStudent: StudentType;
   public updatedStudent: StudentType;
 
@@ -56,10 +56,6 @@ export class StudentManagementService {
         console.log(this.allStudents);
       });
   };
-
-  receiveNotification() {
-    return this.socket.fromEvent('notification');
-  }
 
   public getStudents() {
     return this.apollo
@@ -90,8 +86,6 @@ export class StudentManagementService {
       .subscribe((result) => {
         this.createdStudent = result.data as StudentType;
       });
-
-    console.log("Notification is: ",this.receiveNotification());
   };
 
   public updateStudent = (studentToUpdate: UpdateStudentInput) => {
