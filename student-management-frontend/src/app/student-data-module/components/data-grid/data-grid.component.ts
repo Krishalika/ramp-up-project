@@ -12,6 +12,7 @@ import { StudentCreateDTO } from '../../types/student.type';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { WebSocketService } from '../../services/websocket.service';
 import { NotificationFEService } from '../../services/notificationfe.service';
+import { addStudent } from '../../store/actions/student.action';
 
 const Get_All_STUDENTS = gql`
   query {
@@ -65,8 +66,9 @@ export class DataGridComponent implements OnInit {
     private apollo: Apollo,
     private studentService: StudentManagementService,
     private notificationService: NotificationService,
-    private socketService: WebSocketService
-  ) {}
+    private socketService: WebSocketService,
+    private store: Store<AppState>
+  ) { }
 
   ngOnInit(): void {
     this.apollo
@@ -91,6 +93,16 @@ export class DataGridComponent implements OnInit {
     const mobile = this.formGroup.value.mobile;
     const dob = this.formGroup.value.dob;
     const age = this.formGroup.value.age;
+
+    const student: StudentCreateDTO = {
+      id: parseInt(id),
+      name: name,
+      gender: gender,
+      address: address,
+      mobile: parseInt(mobile),
+      dob: dob,
+      age: parseInt(age),
+    }
     this.newStudent = {
       id: parseInt(id),
       name: name,
@@ -102,13 +114,18 @@ export class DataGridComponent implements OnInit {
     };
 
     this.studentService.createStudent(this.newStudent);
+    // try {
+    //   this.store.dispatch(addStudent({ student }));
+    // } catch (e) {
+    //   console.log("Exception: ", e);
+    // }
 
-    console.log(
-      'The printed msg: ',
-      this.socketService.notification$.subscribe((message) => {
-        console.log(message);
-      })
-    );
+    // console.log(
+    //   'The printed msg: ',
+    //   this.socketService.notification$.subscribe((message) => {
+    //     console.log(message);
+    //   })
+    // );
     this.clearForm();
   }
 

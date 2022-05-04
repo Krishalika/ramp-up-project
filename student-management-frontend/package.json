@@ -20,6 +20,7 @@
     "@angular/platform-browser-dynamic": "~13.0.0",
     "@angular/router": "~13.0.0",
     "@apollo/client": "^3.0.0",
+    "@ngrx/effects": "^13.2.0",
     "@ngrx/store": "^13.1.0",
     "@ngrx/store-devtools": "^13.1.0",
     "@progress/kendo-angular-buttons": "^7.0.0",
