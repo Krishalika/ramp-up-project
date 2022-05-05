@@ -5,14 +5,18 @@ import { UploadFileEvent } from './events/upload-file.event';
 import { NotificationGateway } from './notification.gateway';
 import { NotificationService } from './notification.service';
 import { Socket } from 'socket.io-client';
-import { ConnectedSocket, MessageBody, SubscribeMessage } from '@nestjs/websockets';
+import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+} from '@nestjs/websockets';
 
 @Controller()
 export class NotificationController {
   constructor(
     private readonly notificationService: NotificationService,
     private readonly gateway: NotificationGateway,
-  ) { }
+  ) {}
 
   // socket: Socket
 
@@ -20,7 +24,6 @@ export class NotificationController {
   handleFileProcessed(data: UploadFileEvent) {
     this.notificationService.handleFileProcessed(data);
   }
-
 
   @Get()
   async getHello() {
@@ -33,5 +36,3 @@ export class NotificationController {
     this.notificationService.handleStudentCreated(data);
   }
 }
-
-
