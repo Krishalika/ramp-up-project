@@ -4,11 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UploadConsumer } from './file-upload.consumer';
 import { FileUploadController } from './file-upload.controller';
 import { FileProducerService } from './file-upload.service';
-import { MessageConsumer } from './message/message.consumer';
-import { MessageController } from './message/message.controller';
-import { MessageProducerService } from './message/message.producer.service';
 import { StudentEntity } from './student.entity';
-import { StudentRepository } from './student.repository';
 
 @Module({
   imports: [
@@ -18,14 +14,9 @@ import { StudentRepository } from './student.repository';
         port: 5003,
       },
     }),
-    BullModule.registerQueue(
-      {
-        name: 'upload-queue',
-      },
-      {
-        name: 'message-queue',
-      },
-    ),
+    BullModule.registerQueue({
+      name: 'upload-queue',
+    }),
     TypeOrmModule.forRoot({
       name: 'upload',
       type: 'postgres',
@@ -39,13 +30,7 @@ import { StudentRepository } from './student.repository';
       autoLoadEntities: true,
     }),
   ],
-  controllers: [FileUploadController, MessageController],
-  providers: [
-    FileProducerService,
-    UploadConsumer,
-    MessageProducerService,
-    MessageConsumer,
-    StudentRepository,
-  ],
+  controllers: [FileUploadController],
+  providers: [FileProducerService, UploadConsumer],
 })
 export class FileUploadModule {}
