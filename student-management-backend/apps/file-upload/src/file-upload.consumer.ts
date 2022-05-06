@@ -17,6 +17,9 @@ export class UploadConsumer {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     console.log(job.data.fileName);
 
+    // let filePath = `../../../../files/` + job.data.fileName;
+    // console.log(filePath);
+
     let filePath = `F:/fc/ramp-up-project/files/${job.data.fileName}`;
 
     // let filePath = `C:/F/A-crash/fc/Ramp up project/ramp-up-project/files/${job.data.fileName}`;
@@ -26,6 +29,8 @@ export class UploadConsumer {
 
     csvFile.split(/\r?\n/).forEach((line) => {
       this.allRows.push(line);
+
+      // this.allRows.push(Object.assign({}, line));
     });
     console.log(this.allRows);
 
