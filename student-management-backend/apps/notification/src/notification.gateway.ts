@@ -8,22 +8,20 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { NotificationService } from './notification.service';
-// import { Socket } from 'socket.io-client';
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({ cors: true })
 export class NotificationGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer() server;
-
+  @WebSocketServer() server: Server;
+    socket:Socket
   private logger: Logger = new Logger('NotificationService');
-  private socket: Socket;
 
   constructor(private service: NotificationService) { }
 
   handleConnection(client: any, ...args: any[]) {
     this.logger.log(`Client connected: ${client.id}`)
-    console.log('Connected');
+    console.log('Connected: ', client.room);
   }
   handleDisconnect(client: any) {
     this.logger.log(`Client disconnected: ${client.id}`)
@@ -35,15 +33,34 @@ export class NotificationGateway
   }
 
   @SubscribeMessage('test')
-  handleFileProcessed(client: any, data: any) {
+  handleFileProcessed(client: Socket, data: { room: string, message: string }) {
+
     try {
-      this.server.emit('messages', data);
+      console.log("Room: ", data.room);
+      console.log("Joined room client sub: ", client.id);
+
+    //  this.server.to(data.room).emit('messages', data.message)
+      this.server.emit('messages', data.message)
+
     } catch (e) {
       console.log('Exception: ', e);
     }
   }
 
-  // handleStudentCreated() {
-  //   this.server.emit('client', this.service.handleStudentCreated);
-  // }
+  @SubscribeMessage('joinRoom')
+  handleJoinRoom(client: Socket, room: string) {
+    console.log("Joined room client: ", client.id);
+
+    client.join(room);
+
+    client.emit('joinedRoom', room);
+    this.logger.log(`Client joined ${room}`);
+  }
+
+  @SubscribeMessage('leaveRoom')
+  handleLeaveRoom(client: Socket, room: string) {
+    client.leave(room);
+    client.emit('leftRoom', room);
+
+  }
 }

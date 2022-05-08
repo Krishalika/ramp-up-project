@@ -10,29 +10,32 @@ import { Socket, io } from 'socket.io-client';
 export class UploadConsumer {
   allRows = [];
   socket: Socket = io('http://localhost:4001');
-  constructor() {}
+
+  constructor() {
+
+  }
 
   @Process({ name: 'job', concurrency: 8 })
   async uploadJob(job: Job<any>) {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     console.log(job.data.fileName);
-
-    // let filePath = `../../../../files/` + job.data.fileName;
-    // console.log(filePath);
-
-    let filePath = `F:/fc/ramp-up-project/files/${job.data.fileName}`;
-
-    // let filePath = `C:/F/A-crash/fc/Ramp up project/ramp-up-project/files/${job.data.fileName}`;
+    let filePath = `../files/${job.data.fileName}`;
 
     //read and save to db
-    const csvFile = readFileSync(filePath, 'utf8');
+    try {
+      const csvFile = readFileSync(filePath, 'utf8');
+      csvFile.split(/\r?\n/).forEach((line) => {
+        this.allRows.push(line);
 
-    csvFile.split(/\r?\n/).forEach((line) => {
-      this.allRows.push(line);
+        // this.allRows.push(Object.assign({}, line));
+      });
+    } catch (e) {
+      console.log("error in file path: ", e);
+    }
 
-      // this.allRows.push(Object.assign({}, line));
-    });
     console.log(this.allRows);
+    this.socket.connect();
+    this.socket.emit('joinRoom', 'active');
 
     try {
       await getConnection('upload')
@@ -41,7 +44,7 @@ export class UploadConsumer {
         .into(StudentEntity)
         .values([
           {
-            id: 500,
+            id: 505,
             name: 'Name1',
             gender: 'Male',
             address: 'Colombo',
@@ -50,7 +53,7 @@ export class UploadConsumer {
             age: 24,
           },
           {
-            id: 502,
+            id: 506,
             name: 'Name2',
             gender: 'Female',
             address: 'Gampaha',
@@ -61,12 +64,17 @@ export class UploadConsumer {
         ])
         .execute();
 
-      this.socket.connect();
-      this.socket.emit('test', 'File processing completed successfully');
+      this.socket.emit('test', { room: 'active', message: 'File processing completed successfully' });
+
     } catch (e) {
       console.log('Error in saving: ', e);
-      this.socket.connect();
-      this.socket.emit('test', 'Error in file processing');
+      // this.socket.connect();
+
+      //   this.socket.emit('joinRoom', 'active');
+
+      this.socket.emit('test', { room: "active", message: 'got error in processing' });
+
     }
   }
 }
+

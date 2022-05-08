@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Post,
   UploadedFile,
@@ -7,22 +6,30 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadQueueProducerService } from './upload-queue.producer.service';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller()
 export class FileUploadController {
   constructor(
     private readonly uploadQueueProducerService: UploadQueueProducerService,
-  ) {}
-
-  @Post()
-  async sendFileName(@Body() body: { fileName: string }) {
-    await this.uploadQueueProducerService.sendFileNameToJob(body.fileName);
-    return body;
-  }
-
+  ) { }
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
-    console.log(file.originalname);
+  @UseInterceptors(FileInterceptor('file',
+    {
+      storage: diskStorage({
+        destination: '../files',
+        filename: (req, file, cb) => {
+          const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('')
+          return cb(null, `${randomName}${extname(file.originalname)}`)
+        }
+      })
+    }
+  )
+  )
+  async uploadFile(@UploadedFile() file) {
+    console.log("File name: ", file.filename);
+    await this.uploadQueueProducerService.sendFileNameToJob(file.filename);
+    return file.filename
   }
 }
