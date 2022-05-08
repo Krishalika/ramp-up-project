@@ -1,7 +1,8 @@
 import { createAction, props } from "@ngrx/store";
 import { Student } from "../../models/student.model";
+import { StudentCreateDTO } from "../../types/student.type";
 
-export const addStudent = createAction('[Student] Add student', props<{ student: Student }>());
+export const addStudent = createAction('[Student] Add student', props<{ student: StudentCreateDTO }>());
 
 export const getStudents = createAction('[Student] Get students');
 

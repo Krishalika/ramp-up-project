@@ -9,7 +9,7 @@ export const studentReducer = createReducer(initialState,
         return [student, ...state]
     }),
     on(getStudentsSuccess, (state, { students }) => {
-        return [...students].sort()
+        return [...students].sort((studentOne, studentTwo) => (studentOne.id < studentTwo.id ? 1 : -1))
     }),
     on(getStudentsFailure, state => state)
 )

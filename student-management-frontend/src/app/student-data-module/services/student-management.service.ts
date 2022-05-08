@@ -8,7 +8,6 @@ import {
   StudentType,
   UpdateStudentInput,
 } from '../types/student.type';
-import { Socket } from 'ngx-socket-io';
 
 const Get_All_STUDENTS = gql`
   query {
@@ -30,7 +29,7 @@ const Get_All_STUDENTS = gql`
 export class StudentManagementService {
   allStudents: Student[] = [];
   public student: Student;
-  constructor(private apollo: Apollo) {}
+  constructor(private apollo: Apollo) { }
   public createdStudent: StudentType;
   public updatedStudent: StudentType;
 

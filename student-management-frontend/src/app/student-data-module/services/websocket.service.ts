@@ -8,9 +8,11 @@ import { Observable } from 'rxjs';
 export class WebSocketService {
   notification$ = this.socket.fromEvent<any>('client');
 
-  constructor(private socket: Socket) {}
+  constructor(private socket: Socket) { }
 
   listenForMessages(): Observable<string> {
+    // return this.socket.fromEvent<string>('joinedRoom');
+    
     return this.socket.fromEvent<string>('messages');
   }
 }

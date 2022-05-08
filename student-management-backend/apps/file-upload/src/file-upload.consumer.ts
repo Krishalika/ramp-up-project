@@ -4,34 +4,38 @@ import { readFileSync } from 'fs';
 import { getConnection } from 'typeorm';
 import { StudentEntity } from './student.entity';
 import 'reflect-metadata';
-import { StudentRepository } from './student.repository';
-import { ClientProxy } from '@nestjs/microservices';
-import { Inject } from '@nestjs/common';
-import { UploadFileEvent } from './events/upload-file.event';
+import { Socket, io } from 'socket.io-client';
 
 @Processor('upload-queue')
 export class UploadConsumer {
   allRows = [];
-  private studentRepository: StudentRepository;
-  constructor(
-   @Inject('NOTIFICATION') private readonly notificationClient: ClientProxy,
-  ) {
-    // this.studentRepository = getConnection("upload").getCustomRepository(StudentRepository);
+  socket: Socket = io('http://localhost:4001');
+
+  constructor() {
+
   }
 
   @Process({ name: 'job', concurrency: 8 })
   async uploadJob(job: Job<any>) {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     console.log(job.data.fileName);
+    let filePath = `../files/${job.data.fileName}`;
 
-    let filePath = `F:/fc/ramp-up-project/files/${job.data.fileName}`;
     //read and save to db
-    const csvFile = readFileSync(filePath, 'utf8');
+    try {
+      const csvFile = readFileSync(filePath, 'utf8');
+      csvFile.split(/\r?\n/).forEach((line) => {
+        this.allRows.push(line);
 
-    csvFile.split(/\r?\n/).forEach((line) => {
-      this.allRows.push(line);
-    });
+        // this.allRows.push(Object.assign({}, line));
+      });
+    } catch (e) {
+      console.log("error in file path: ", e);
+    }
+
     console.log(this.allRows);
+    this.socket.connect();
+    this.socket.emit('joinRoom', 'active');
 
     try {
       await getConnection('upload')
@@ -40,7 +44,7 @@ export class UploadConsumer {
         .into(StudentEntity)
         .values([
           {
-            id: 302,
+            id: 505,
             name: 'Name1',
             gender: 'Male',
             address: 'Colombo',
@@ -49,7 +53,7 @@ export class UploadConsumer {
             age: 24,
           },
           {
-            id: 402,
+            id: 506,
             name: 'Name2',
             gender: 'Female',
             address: 'Gampaha',
@@ -60,18 +64,17 @@ export class UploadConsumer {
         ])
         .execute();
 
-      //send message to notification service
-      this.notificationClient.emit(
-        'file_processed',
-        new UploadFileEvent('File processed successfully'),
-      );
+      this.socket.emit('test', { room: 'active', message: 'File processing completed successfully' });
+
     } catch (e) {
       console.log('Error in saving: ', e);
+      // this.socket.connect();
 
-      this.notificationClient.emit(
-        'file_processed',
-        new UploadFileEvent('Error in file processing'),
-      );
+      //   this.socket.emit('joinRoom', 'active');
+
+      this.socket.emit('test', { room: "active", message: 'got error in processing' });
+
     }
   }
 }
+
