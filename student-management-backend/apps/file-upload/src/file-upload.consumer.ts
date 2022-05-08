@@ -1,19 +1,27 @@
 import { Process, Processor } from '@nestjs/bull';
 import { Job } from 'bull';
-import { readFileSync } from 'fs';
 import { getConnection } from 'typeorm';
 import { StudentEntity } from './student.entity';
 import 'reflect-metadata';
 import { Socket, io } from 'socket.io-client';
+import * as fs from "fs";
+import { parse } from 'csv-parse';
+
+type student = {
+  id: number
+  name: string
+  gender: string
+  address: string
+  mobile: number
+  dob: student
+  age: number
+}
 
 @Processor('upload-queue')
 export class UploadConsumer {
-  allRows = [];
   socket: Socket = io('http://localhost:4001');
-
-  constructor() {
-
-  }
+  allRows = [];
+  constructor() { }
 
   @Process({ name: 'job', concurrency: 8 })
   async uploadJob(job: Job<any>) {
@@ -21,60 +29,49 @@ export class UploadConsumer {
     console.log(job.data.fileName);
     let filePath = `../files/${job.data.fileName}`;
 
-    //read and save to db
-    try {
-      const csvFile = readFileSync(filePath, 'utf8');
-      csvFile.split(/\r?\n/).forEach((line) => {
-        this.allRows.push(line);
+    //read file
+    (() => {
 
-        // this.allRows.push(Object.assign({}, line));
+      const headers = ['id', 'name', 'gender', 'address', 'mobile', 'dob', 'age'];
+      const fileContent = fs.readFileSync(filePath, { encoding: 'utf-8' });
+
+      parse(fileContent, {
+        delimiter: ',',
+        columns: headers,
+        fromLine: 1,
+        cast: (columnValue, context) => {
+          if (context.column === 'id' || context.column === 'mobile' || context.column === 'age') {
+            return parseInt(columnValue, 10);
+          }
+          return columnValue;
+        }
+      }, async (error, result: student[]) => {
+        if (error) {
+          console.error(error);
+        }
+        this.allRows.push(result)
+
+        try {
+
+          //save file content in the database
+          await getConnection('upload')
+            .createQueryBuilder()
+            .insert()
+            .into(StudentEntity)
+            .values(this.allRows[0])
+            .execute();
+
+          this.socket.emit('test', { room: 'active', message: 'File processing completed successfully' });
+        } catch (e) {
+          console.log('Error in saving: ', e);
+          this.socket.emit('test', { room: "active", message: 'got error in processing' });
+        }
       });
-    } catch (e) {
-      console.log("error in file path: ", e);
-    }
+    })();
 
-    console.log(this.allRows);
     this.socket.connect();
     this.socket.emit('joinRoom', 'active');
 
-    try {
-      await getConnection('upload')
-        .createQueryBuilder()
-        .insert()
-        .into(StudentEntity)
-        .values([
-          {
-            id: 505,
-            name: 'Name1',
-            gender: 'Male',
-            address: 'Colombo',
-            mobile: 713066355,
-            dob: 'Mon 13 Jan 1998',
-            age: 24,
-          },
-          {
-            id: 506,
-            name: 'Name2',
-            gender: 'Female',
-            address: 'Gampaha',
-            mobile: 713066355,
-            dob: 'Mon 13 Jan 1998',
-            age: 24,
-          },
-        ])
-        .execute();
-
-      this.socket.emit('test', { room: 'active', message: 'File processing completed successfully' });
-
-    } catch (e) {
-      console.log('Error in saving: ', e);
-      // this.socket.connect();
-
-      //   this.socket.emit('joinRoom', 'active');
-
-      this.socket.emit('test', { room: "active", message: 'got error in processing' });
-
-    }
   }
 }
 
