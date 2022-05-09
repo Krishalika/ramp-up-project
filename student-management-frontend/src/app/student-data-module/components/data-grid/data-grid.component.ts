@@ -1,11 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Store } from '@ngrx/store';
-import { AddEvent, GridComponent } from '@progress/kendo-angular-grid';
+import { AddEvent, GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
 import { gql, Apollo } from 'apollo-angular';
-import { Observable } from 'rxjs';
 import { Student } from '../../models/student.model';
-import { AppState } from '../../store/states/student.state';
 import * as moment from 'moment';
 import { StudentManagementService } from '../../services/student-management.service';
 import { StudentCreateDTO } from '../../types/student.type';
@@ -50,23 +47,36 @@ const formGroup = (dataItem) =>
 })
 export class DataGridComponent implements OnInit {
   allStudents: Student[] = [];
+  public gridView: GridDataResult;
   newStudent: StudentCreateDTO;
   updatedStudent: StudentCreateDTO;
-  students: Observable<Student[]>;
   public formGroup!: FormGroup;
   private isNew = false;
   private editedRowIndex: number;
   @ViewChild(GridComponent) private grid: GridComponent;
 
-  public notification: string = '';
-  messages: string[] = [];
+  public pageSize = 5;
+  public skip = 0;
+
   constructor(
     private apollo: Apollo,
     private studentService: StudentManagementService,
     private notificationService: NotificationService,
-    private socketService: WebSocketService) { }
+    private socketService: WebSocketService) {
+    this.loadItems();
+  }
 
   ngOnInit(): void {
+
+    this.getAll();
+
+    this.socketService.listenForMessages().subscribe((message) => {
+      console.log('Incoming notification: ', message);
+      this.showNotificationInfo(message);
+    });
+  }
+
+  public getAll() {
     this.apollo
       .watchQuery<any>({
         query: Get_All_STUDENTS,
@@ -75,11 +85,18 @@ export class DataGridComponent implements OnInit {
         console.log(loading);
         this.allStudents = data.getAllStudents;
       });
+  }
 
-    this.socketService.listenForMessages().subscribe((message) => {
-      console.log('Incoming notification: ', message);
-      this.showNotificationInfo(message);
-    });
+  public pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip;
+    this.loadItems();
+  }
+
+  private loadItems(): void {
+    this.gridView = {
+      data: this.allStudents.slice(this.skip, this.skip + this.pageSize),
+      total: this.allStudents.length,
+    };
   }
 
   public saveCurrent() {

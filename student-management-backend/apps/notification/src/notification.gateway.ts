@@ -9,6 +9,7 @@ import {
 import { Logger } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { Server, Socket } from 'socket.io';
+import { io } from 'socket.io-client';
 
 @WebSocketGateway({ cors: true })
 export class NotificationGateway
@@ -33,29 +34,12 @@ export class NotificationGateway
 
   @SubscribeMessage('test')
   handleFileProcessed(client: Socket, data: { id: string, message: string }) {
-
     try {
-      console.log("Joined client: ", client.id);
       this.server.emit('messages', data.message)
     } catch (e) {
       console.log('Exception: ', e);
     }
   }
 
-  @SubscribeMessage('joinRoom')
-  handleJoinRoom(client: Socket, room: string) {
-    console.log("Joined room client: ", client.id);
 
-    client.join(room);
-
-    client.emit('joinedRoom', room);
-    this.logger.log(`Client joined ${room}`);
-  }
-
-  @SubscribeMessage('leaveRoom')
-  handleLeaveRoom(client: Socket, room: string) {
-    client.leave(room);
-    client.emit('leftRoom', room);
-
-  }
 }
