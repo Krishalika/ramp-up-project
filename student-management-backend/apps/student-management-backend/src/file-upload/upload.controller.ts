@@ -15,7 +15,7 @@ export class FileUploadController {
     private readonly uploadQueueProducerService: UploadQueueProducerService,
   ) { }
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file',
+  @UseInterceptors(FileInterceptor('csv',
     {
       storage: diskStorage({
         destination: '../files',

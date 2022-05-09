@@ -51,9 +51,12 @@ export class UploadConsumer {
         }
         this.allRows.push(result)
 
+        this.socket.connect();
+        // this.socket.emit('joinRoom', 'active');
+
         try {
 
-          //save file content in the database
+          //save records in the database
           await getConnection('upload')
             .createQueryBuilder()
             .insert()
@@ -61,17 +64,13 @@ export class UploadConsumer {
             .values(this.allRows[0])
             .execute();
 
-          this.socket.emit('test', { room: 'active', message: 'File processing completed successfully' });
+          this.socket.emit('test', { id: this.socket.id, message: 'File processing completed successfully' });
         } catch (e) {
           console.log('Error in saving: ', e);
-          this.socket.emit('test', { room: "active", message: 'got error in processing' });
+          this.socket.emit('test', { id: this.socket.id, message: 'Error in processing' });
         }
       });
     })();
-
-    this.socket.connect();
-    this.socket.emit('joinRoom', 'active');
-
   }
 }
 

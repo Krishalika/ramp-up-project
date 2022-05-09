@@ -39,6 +39,7 @@
     "@progress/kendo-angular-popup": "^4.0.3",
     "@progress/kendo-angular-progressbar": "^2.0.0",
     "@progress/kendo-angular-treeview": "^6.0.0",
+    "@progress/kendo-angular-upload": "^9.0.0",
     "@progress/kendo-data-query": "^1.0.0",
     "@progress/kendo-drawing": "^1.0.0",
     "@progress/kendo-licensing": "^1.0.2",

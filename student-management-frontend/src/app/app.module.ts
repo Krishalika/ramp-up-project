@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -14,11 +14,13 @@ import { StoreModule } from '@ngrx/store';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { NotificationModule } from '@progress/kendo-angular-notification';
 import { FileUploadComponent } from './student-data-module/components/file-upload/file-upload.component';
+import { HomeComponent } from './student-data-module/containers/home/home.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 const config: SocketIoConfig = { url: 'http://localhost:4001', options: {} };
 
 @NgModule({
-  declarations: [AppComponent, DataGridComponent, FileUploadComponent],
+  declarations: [AppComponent, DataGridComponent, FileUploadComponent, HomeComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -27,6 +29,7 @@ const config: SocketIoConfig = { url: 'http://localhost:4001', options: {} };
     GridModule,
     GraphQLModule,
     HttpClientModule,
+    ReactiveFormsModule,
     SocketIoModule.forRoot(config),
     StoreModule.forRoot({
       student: studentReducer,
@@ -35,5 +38,8 @@ const config: SocketIoConfig = { url: 'http://localhost:4001', options: {} };
   ],
   providers: [],
   bootstrap: [AppComponent],
+  // schemas: [
+  //   CUSTOM_ELEMENTS_SCHEMA
+  // ],
 })
-export class AppModule {}
+export class AppModule { }
