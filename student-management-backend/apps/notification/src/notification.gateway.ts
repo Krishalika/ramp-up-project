@@ -14,14 +14,13 @@ import { Server, Socket } from 'socket.io';
 export class NotificationGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
-    socket:Socket
+  socket: Socket
   private logger: Logger = new Logger('NotificationService');
 
   constructor(private service: NotificationService) { }
 
   handleConnection(client: any, ...args: any[]) {
     this.logger.log(`Client connected: ${client.id}`)
-    console.log('Connected: ', client.room);
   }
   handleDisconnect(client: any) {
     this.logger.log(`Client disconnected: ${client.id}`)
@@ -33,13 +32,11 @@ export class NotificationGateway
   }
 
   @SubscribeMessage('test')
-  handleFileProcessed(client: Socket, data: { room: string, message: string }) {
+  handleFileProcessed(client: Socket, data: { id: string, message: string }) {
 
     try {
-      console.log("Room: ", data.room);
-      console.log("Joined room client sub: ", client.id);
-
-    //  this.server.to(data.room).emit('messages', data.message)
+      console.log("Joined client: ", client.id);
+      // this.server.to(data.id).emit('messages', data.message)
       this.server.emit('messages', data.message)
 
     } catch (e) {
