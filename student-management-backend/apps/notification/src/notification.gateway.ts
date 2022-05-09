@@ -36,9 +36,7 @@ export class NotificationGateway
 
     try {
       console.log("Joined client: ", client.id);
-      // this.server.to(data.id).emit('messages', data.message)
       this.server.emit('messages', data.message)
-
     } catch (e) {
       console.log('Exception: ', e);
     }

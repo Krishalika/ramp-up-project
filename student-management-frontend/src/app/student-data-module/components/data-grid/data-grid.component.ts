@@ -11,8 +11,6 @@ import { StudentManagementService } from '../../services/student-management.serv
 import { StudentCreateDTO } from '../../types/student.type';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { WebSocketService } from '../../services/websocket.service';
-import { NotificationFEService } from '../../services/notificationfe.service';
-import { addStudent } from '../../store/actions/student.action';
 
 const Get_All_STUDENTS = gql`
   query {
@@ -66,9 +64,7 @@ export class DataGridComponent implements OnInit {
     private apollo: Apollo,
     private studentService: StudentManagementService,
     private notificationService: NotificationService,
-    private socketService: WebSocketService,
-    private store: Store<AppState>
-  ) { }
+    private socketService: WebSocketService) { }
 
   ngOnInit(): void {
     this.apollo
@@ -82,6 +78,7 @@ export class DataGridComponent implements OnInit {
 
     this.socketService.listenForMessages().subscribe((message) => {
       console.log('Incoming notification: ', message);
+      this.showNotificationInfo(message);
     });
   }
 
@@ -94,15 +91,6 @@ export class DataGridComponent implements OnInit {
     const dob = this.formGroup.value.dob;
     const age = this.formGroup.value.age;
 
-    const student: StudentCreateDTO = {
-      id: parseInt(id),
-      name: name,
-      gender: gender,
-      address: address,
-      mobile: parseInt(mobile),
-      dob: dob,
-      age: parseInt(age),
-    }
     this.newStudent = {
       id: parseInt(id),
       name: name,
@@ -113,36 +101,34 @@ export class DataGridComponent implements OnInit {
       age: parseInt(age),
     };
 
-    this.studentService.createStudent(this.newStudent);
-    // try {
-    //   this.store.dispatch(addStudent({ student }));
-    // } catch (e) {
-    //   console.log("Exception: ", e);
-    // }
+    try {
+      this.studentService.createStudent(this.newStudent);
+      this.showNotificationInfo("Record added")
+    } catch (e) {
+      this.showNotificationInfo("Error in saving")
+    }
 
-    // console.log(
-    //   'The printed msg: ',
-    //   this.socketService.notification$.subscribe((message) => {
-    //     console.log(message);
-    //   })
-    // );
     this.clearForm();
   }
 
-  public showNotification(customMessage: string): void {
+  public showNotificationInfo(customMessage: string): void {
     this.notificationService.show({
       content: customMessage,
-      // cssClass: 'button-notification',
       animation: { type: 'slide', duration: 400 },
       position: { horizontal: 'center', vertical: 'bottom' },
-      type: { style: 'success', icon: true },
+      type: { style: 'info', icon: true },
       closable: true,
     });
   }
-
   public removeStudent(item) {
     const id = item.id;
-    this.studentService.deleteStudent(parseInt(id));
+
+    try {
+      this.studentService.deleteStudent(parseInt(id));
+      this.showNotificationInfo("Record removed")
+    } catch (e) {
+      this.showNotificationInfo("Error in removing record")
+    }
   }
 
   public updateStudent(item) {
@@ -166,11 +152,15 @@ export class DataGridComponent implements OnInit {
       age: parseInt(age),
     };
 
-    this.studentService.updateStudent(this.updatedStudent);
+    try {
+      this.studentService.updateStudent(this.updatedStudent);
+      this.showNotificationInfo("Record updated")
+    } catch (e) {
+      this.showNotificationInfo("Error in updating record")
+    }
   }
 
   editHandler({ sender, rowIndex, dataItem }) {
-    // define all editable fields validators and default values
     const group = new FormGroup({
       id: new FormControl(dataItem.id, Validators.required),
       name: new FormControl(dataItem.name, Validators.required),
@@ -187,19 +177,8 @@ export class DataGridComponent implements OnInit {
       ),
     });
 
-    // put the row in edit mode, with the `FormGroup` build above
     sender.editRow(rowIndex, group);
   }
-
-  // editRow(row) {
-  //   this.allStudents
-  //     .filter((row) => row.isEditable)
-  //     .map((r) => {
-  //       r.isEditable = false;
-  //       return r;
-  //     });
-  //   row.isEditable = true;
-  // }
 
   private clearForm(): void {
     this.formGroup.reset();
@@ -251,6 +230,6 @@ export class DataGridComponent implements OnInit {
   getAge(birthDate: Date): number {
     const ageTilNowInMilliseconds = Date.now() - birthDate.getTime();
     const ageDate = new Date(ageTilNowInMilliseconds);
-    return Math.abs(ageDate.getUTCFullYear() - 1970); // Because computers count the today date from the 1st of January 1970
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
   }
 }
