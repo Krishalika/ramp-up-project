@@ -54,26 +54,34 @@ export class DataGridComponent implements OnInit {
   private isNew = false;
   private editedRowIndex: number;
   @ViewChild(GridComponent) private grid: GridComponent;
-
+  page = 1;
   public pageSize = 5;
   public skip = 0;
+  private items: unknown[];
+
 
   constructor(
     private apollo: Apollo,
     private studentService: StudentManagementService,
     private notificationService: NotificationService,
     private socketService: WebSocketService) {
-    this.loadItems();
+    //  this.loadItems();
   }
 
   ngOnInit(): void {
 
     this.getAll();
 
+    this.loadItems(this.allStudents)
     this.socketService.listenForMessages().subscribe((message) => {
       console.log('Incoming notification: ', message);
       this.showNotificationInfo(message);
     });
+
+
+    // this.items = this.studentService.getAllStudents();
+    // console.log("Items", this.items);
+
   }
 
   public getAll() {
@@ -85,19 +93,27 @@ export class DataGridComponent implements OnInit {
         console.log(loading);
         this.allStudents = data.getAllStudents;
       });
+    return this.allStudents
   }
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadItems();
+    this.loadItems(this.allStudents);
   }
 
-  private loadItems(): void {
+  private loadItems(item: any[]): void {
     this.gridView = {
-      data: this.allStudents.slice(this.skip, this.skip + this.pageSize),
-      total: this.allStudents.length,
+      data: item.slice(this.skip, this.skip + this.pageSize),
+      total: item.length,
     };
   }
+
+  // private loadItems(): void {
+  //   this.gridView = {
+  //     data: this.items.slice(this.skip, this.skip + this.pageSize),
+  //     total: this.items.length,
+  //   };
+  // }
 
   public saveCurrent() {
     const id = this.formGroup.value.id;

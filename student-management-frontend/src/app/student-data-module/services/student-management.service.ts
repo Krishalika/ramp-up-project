@@ -52,8 +52,9 @@ export class StudentManagementService {
       })
       .subscribe((result) => {
         this.allStudents = result.data as Student[];
-        console.log(this.allStudents);
+        // console.log("Service arr",this.allStudents);
       });
+      return this.allStudents;
   };
 
   public getStudents() {
