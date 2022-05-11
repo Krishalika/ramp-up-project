@@ -19,7 +19,7 @@ export type UpdateStudentInput = {
 };
 
 export type StudentType = {
-  id: string;
+  id: number;
   name: string;
   gender: string;
   address: string;
@@ -28,7 +28,3 @@ export type StudentType = {
   age: number;
 };
 
-// export type OwnerInputType = {
-//     name: string;
-//     address: string;
-// }
