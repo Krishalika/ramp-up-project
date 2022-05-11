@@ -1,0 +1,22 @@
+.fileInput{
+    box-sizing: border-box;
+    border: none;
+    font-family: inherit;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: 4px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    user-select: none;
+    cursor: pointer;
+    outline: none;
+    position: relative;
+    transition: color 0.2s ;
+    padding: 4px 8px;
+    font-size: 14px;
+    line-height: 1.4285714286;
+    background: rgba(138, 191, 248, 0.666);
+
+}

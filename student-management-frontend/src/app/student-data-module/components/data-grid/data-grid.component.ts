@@ -1,9 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { AddEvent, GridComponent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import {
+  AddEvent,
+  GridComponent,
+  GridDataResult,
+  PageChangeEvent,
+} from '@progress/kendo-angular-grid';
 import { gql, Apollo } from 'apollo-angular';
 import { Student } from '../../models/student.model';
-import * as moment from 'moment';
 import { StudentManagementService } from '../../services/student-management.service';
 import { StudentCreateDTO } from '../../types/student.type';
 import { NotificationService } from '@progress/kendo-angular-notification';
@@ -57,31 +61,22 @@ export class DataGridComponent implements OnInit {
   page = 1;
   public pageSize = 5;
   public skip = 0;
-  private items: unknown[];
-
 
   constructor(
     private apollo: Apollo,
     private studentService: StudentManagementService,
     private notificationService: NotificationService,
-    private socketService: WebSocketService) {
-    //  this.loadItems();
-  }
+    private socketService: WebSocketService
+  ) {}
 
   ngOnInit(): void {
-
     this.getAll();
 
-    this.loadItems(this.allStudents)
+    this.loadItems(this.allStudents);
     this.socketService.listenForMessages().subscribe((message) => {
       console.log('Incoming notification: ', message);
       this.showNotificationInfo(message);
     });
-
-
-    // this.items = this.studentService.getAllStudents();
-    // console.log("Items", this.items);
-
   }
 
   public getAll() {
@@ -93,7 +88,7 @@ export class DataGridComponent implements OnInit {
         console.log(loading);
         this.allStudents = data.getAllStudents;
       });
-    return this.allStudents
+    return this.allStudents;
   }
 
   public pageChange(event: PageChangeEvent): void {
@@ -107,13 +102,6 @@ export class DataGridComponent implements OnInit {
       total: item.length,
     };
   }
-
-  // private loadItems(): void {
-  //   this.gridView = {
-  //     data: this.items.slice(this.skip, this.skip + this.pageSize),
-  //     total: this.items.length,
-  //   };
-  // }
 
   public saveCurrent() {
     const id = this.formGroup.value.id;
@@ -136,9 +124,9 @@ export class DataGridComponent implements OnInit {
 
     try {
       this.studentService.createStudent(this.newStudent);
-      this.showNotificationInfo("Record added")
+      this.showNotificationInfo('Record added');
     } catch (e) {
-      this.showNotificationInfo("Error in saving")
+      this.showNotificationInfo('Error in saving');
     }
 
     this.clearForm();
@@ -158,9 +146,9 @@ export class DataGridComponent implements OnInit {
 
     try {
       this.studentService.deleteStudent(parseInt(id));
-      this.showNotificationInfo("Record removed")
+      this.showNotificationInfo('Record removed');
     } catch (e) {
-      this.showNotificationInfo("Error in removing record")
+      this.showNotificationInfo('Error in removing record');
     }
   }
 
@@ -187,9 +175,9 @@ export class DataGridComponent implements OnInit {
 
     try {
       this.studentService.updateStudent(this.updatedStudent);
-      this.showNotificationInfo("Record updated")
+      this.showNotificationInfo('Record updated');
     } catch (e) {
-      this.showNotificationInfo("Error in updating record")
+      this.showNotificationInfo('Error in updating record');
     }
   }
 
@@ -254,15 +242,5 @@ export class DataGridComponent implements OnInit {
 
   public get isInEditingMode(): boolean {
     return this.editedRowIndex !== undefined || this.isNew;
-  }
-
-  public calculateAge(birthdate: any): number {
-    return moment().diff(birthdate, 'years');
-  }
-
-  getAge(birthDate: Date): number {
-    const ageTilNowInMilliseconds = Date.now() - birthDate.getTime();
-    const ageDate = new Date(ageTilNowInMilliseconds);
-    return Math.abs(ageDate.getUTCFullYear() - 1970);
   }
 }

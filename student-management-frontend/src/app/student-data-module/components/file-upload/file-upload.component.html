@@ -1,31 +1,14 @@
-<!-- <kendo-upload [saveUrl]="uploadSaveUrl" [removeUrl]="uploadRemoveUrl">
-</kendo-upload> -->
-
-<!-- <div class="text-center">
-    <input class="form-control" type="file" (change)="onChange($event)">
-
-    <button (click)="onUpload()" class="btn btn-success">
-        Upload
-    </button>
-</div>
-
-<div class="container" *ngIf="loading">
-    <h3>Loading ...</h3>
-</div> -->
-
 <div>
     <div>
         <div>
             <form [formGroup]="uploadForm" (ngSubmit)="submit()">
-
                 <div class="form-group">
                     <input formControlName="file" id="csv" type="file" class="form-control"
-                        (change)="onFileChange($event)" multiple>
+                        (change)="onFileChange($event)" multiple class="fileInput">
                 </div>
                 <br>
-                <button type="submit">Upload</button>
+                <button class="fileInput" type="submit">Upload</button>
             </form>
-
         </div>
     </div>
 </div>
