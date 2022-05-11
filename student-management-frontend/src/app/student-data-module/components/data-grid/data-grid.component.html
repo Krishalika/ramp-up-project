@@ -1,4 +1,4 @@
-<kendo-grid [pageable]="true" (pageChange)="pageChange($event)" [data]="allStudents" (add)="addHandler($event)"
+<kendo-grid (pageChange)="pageChange($event)" [data]="allStudents | async" (add)="addHandler($event)"
   (edit)="editHandler($event)" (cancel)="canceledHandler($event)">
 
   <ng-template kendoGridToolbarTemplate>

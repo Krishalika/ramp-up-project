@@ -12,6 +12,7 @@ import { StudentManagementService } from '../../services/student-management.serv
 import { StudentCreateDTO } from '../../types/student.type';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { WebSocketService } from '../../services/websocket.service';
+import { map, Observable } from "rxjs";
 
 const Get_All_STUDENTS = gql`
   query {
@@ -50,7 +51,9 @@ const formGroup = (dataItem) =>
   styleUrls: ['./data-grid.component.scss'],
 })
 export class DataGridComponent implements OnInit {
-  allStudents: Student[] = [];
+  // allStudents: Student[] = [];
+  allStudents: Observable<any>;
+  // allStudents: Observable<GridDataResult>;
   public gridView: GridDataResult;
   newStudent: StudentCreateDTO;
   updatedStudent: StudentCreateDTO;
@@ -67,12 +70,23 @@ export class DataGridComponent implements OnInit {
     private studentService: StudentManagementService,
     private notificationService: NotificationService,
     private socketService: WebSocketService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.getAll();
+    // this.getAll();
 
-    this.loadItems(this.allStudents);
+    this.allStudents = this.apollo
+      .watchQuery({
+        query: Get_All_STUDENTS,
+      })
+      .valueChanges.pipe(
+        map((result: any) => {
+          console.log(result.data.getAllStudents);
+          return result.data.getAllStudents;
+        })
+      );
+
+    // this.loadItems(this.allStudents);
     this.socketService.listenForMessages().subscribe((message) => {
       console.log('Incoming notification: ', message);
       this.showNotificationInfo(message);
@@ -93,7 +107,7 @@ export class DataGridComponent implements OnInit {
 
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
-    this.loadItems(this.allStudents);
+    // this.loadItems(this.allStudents);
   }
 
   private loadItems(item: any[]): void {

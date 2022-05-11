@@ -53,7 +53,7 @@ export class StudentManagementService {
       .subscribe((result) => {
         this.allStudents = result.data as Student[];
       });
-      return this.allStudents;
+    return this.allStudents;
   };
 
   public getStudents() {
@@ -80,6 +80,7 @@ export class StudentManagementService {
             }
           }
         `,
+        refetchQueries: [{ query: Get_All_STUDENTS }],
         variables: { student: studentToCreate },
       })
       .subscribe((result) => {
@@ -103,6 +104,7 @@ export class StudentManagementService {
             }
           }
         `,
+        refetchQueries: [{ query: Get_All_STUDENTS }],
         variables: { student: studentToUpdate },
       })
       .subscribe((result) => {
@@ -120,6 +122,7 @@ export class StudentManagementService {
             }
           }
         `,
+        refetchQueries: [{ query: Get_All_STUDENTS }],
         variables: { id: Number(id) },
       })
       .subscribe((res) => {
