@@ -14,17 +14,23 @@ import { Server, Socket } from 'socket.io';
 export class NotificationGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
-  socket: Socket
+  wsClients = [];
   private logger: Logger = new Logger('NotificationService');
 
   constructor(private service: NotificationService) { }
 
   handleConnection(client: any, ...args: any[]) {
+    this.wsClients.push(client);
     this.logger.log(`Client connected: ${client.id}`)
   }
   handleDisconnect(client: any) {
+    for (let i = 0; i < this.wsClients.length; i++) {
+      if (this.wsClients[i] === client) {
+        this.wsClients.splice(i, 1);
+        break;  
+      }
+    }
     this.logger.log(`Client disconnected: ${client.id}`)
-    console.log('disconnected');
   }
   afterInit(server: any) {
     this.service.socket = server;
@@ -33,31 +39,10 @@ export class NotificationGateway
 
   @SubscribeMessage('test')
   handleFileProcessed(client: Socket, data: { id: string, message: string }) {
-
     try {
-      console.log("Joined client: ", client.id);
-      // this.server.to(data.id).emit('messages', data.message)
       this.server.emit('messages', data.message)
-
     } catch (e) {
       console.log('Exception: ', e);
     }
-  }
-
-  @SubscribeMessage('joinRoom')
-  handleJoinRoom(client: Socket, room: string) {
-    console.log("Joined room client: ", client.id);
-
-    client.join(room);
-
-    client.emit('joinedRoom', room);
-    this.logger.log(`Client joined ${room}`);
-  }
-
-  @SubscribeMessage('leaveRoom')
-  handleLeaveRoom(client: Socket, room: string) {
-    client.leave(room);
-    client.emit('leftRoom', room);
-
   }
 }

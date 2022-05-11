@@ -52,8 +52,8 @@ export class StudentManagementService {
       })
       .subscribe((result) => {
         this.allStudents = result.data as Student[];
-        console.log(this.allStudents);
       });
+      return this.allStudents;
   };
 
   public getStudents() {
@@ -127,22 +127,4 @@ export class StudentManagementService {
       });
   };
 
-  // public getStudents(): Student[] {
-
-  //     this.apollo.watchQuery<any>({
-  //         query: Get_All_STUDENTS
-  //     })
-  //         .valueChanges.subscribe(({ data, loading }) => {
-  //             console.log(loading);
-  //             this.allStudents = data.getAllStudents;
-  //         })
-  //     return this.allStudents;
-  // }
-  // this.apollo.watchQuery<any>({
-  //   query: Get_All_STUDENTS
-  // })
-  //   .valueChanges.subscribe(({ data, loading }) => {
-  //     console.log(loading);
-  //     this.allStudents = data.getAllStudents;
-  //   })
 }

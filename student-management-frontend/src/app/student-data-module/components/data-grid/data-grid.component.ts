@@ -1,18 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Store } from '@ngrx/store';
-import { AddEvent, GridComponent } from '@progress/kendo-angular-grid';
+import {
+  AddEvent,
+  GridComponent,
+  GridDataResult,
+  PageChangeEvent,
+} from '@progress/kendo-angular-grid';
 import { gql, Apollo } from 'apollo-angular';
-import { Observable } from 'rxjs';
 import { Student } from '../../models/student.model';
-import { AppState } from '../../store/states/student.state';
-import * as moment from 'moment';
 import { StudentManagementService } from '../../services/student-management.service';
 import { StudentCreateDTO } from '../../types/student.type';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { WebSocketService } from '../../services/websocket.service';
-import { NotificationFEService } from '../../services/notificationfe.service';
-import { addStudent } from '../../store/actions/student.action';
 
 const Get_All_STUDENTS = gql`
   query {
@@ -52,25 +51,35 @@ const formGroup = (dataItem) =>
 })
 export class DataGridComponent implements OnInit {
   allStudents: Student[] = [];
+  public gridView: GridDataResult;
   newStudent: StudentCreateDTO;
   updatedStudent: StudentCreateDTO;
-  students: Observable<Student[]>;
   public formGroup!: FormGroup;
   private isNew = false;
   private editedRowIndex: number;
   @ViewChild(GridComponent) private grid: GridComponent;
+  page = 1;
+  public pageSize = 5;
+  public skip = 0;
 
-  public notification: string = '';
-  messages: string[] = [];
   constructor(
     private apollo: Apollo,
     private studentService: StudentManagementService,
     private notificationService: NotificationService,
-    private socketService: WebSocketService,
-    private store: Store<AppState>
-  ) { }
+    private socketService: WebSocketService
+  ) {}
 
   ngOnInit(): void {
+    this.getAll();
+
+    this.loadItems(this.allStudents);
+    this.socketService.listenForMessages().subscribe((message) => {
+      console.log('Incoming notification: ', message);
+      this.showNotificationInfo(message);
+    });
+  }
+
+  public getAll() {
     this.apollo
       .watchQuery<any>({
         query: Get_All_STUDENTS,
@@ -79,10 +88,19 @@ export class DataGridComponent implements OnInit {
         console.log(loading);
         this.allStudents = data.getAllStudents;
       });
+    return this.allStudents;
+  }
 
-    this.socketService.listenForMessages().subscribe((message) => {
-      console.log('Incoming notification: ', message);
-    });
+  public pageChange(event: PageChangeEvent): void {
+    this.skip = event.skip;
+    this.loadItems(this.allStudents);
+  }
+
+  private loadItems(item: any[]): void {
+    this.gridView = {
+      data: item.slice(this.skip, this.skip + this.pageSize),
+      total: item.length,
+    };
   }
 
   public saveCurrent() {
@@ -94,15 +112,6 @@ export class DataGridComponent implements OnInit {
     const dob = this.formGroup.value.dob;
     const age = this.formGroup.value.age;
 
-    const student: StudentCreateDTO = {
-      id: parseInt(id),
-      name: name,
-      gender: gender,
-      address: address,
-      mobile: parseInt(mobile),
-      dob: dob,
-      age: parseInt(age),
-    }
     this.newStudent = {
       id: parseInt(id),
       name: name,
@@ -113,36 +122,34 @@ export class DataGridComponent implements OnInit {
       age: parseInt(age),
     };
 
-    this.studentService.createStudent(this.newStudent);
-    // try {
-    //   this.store.dispatch(addStudent({ student }));
-    // } catch (e) {
-    //   console.log("Exception: ", e);
-    // }
+    try {
+      this.studentService.createStudent(this.newStudent);
+      this.showNotificationInfo('Record added');
+    } catch (e) {
+      this.showNotificationInfo('Error in saving');
+    }
 
-    // console.log(
-    //   'The printed msg: ',
-    //   this.socketService.notification$.subscribe((message) => {
-    //     console.log(message);
-    //   })
-    // );
     this.clearForm();
   }
 
-  public showNotification(customMessage: string): void {
+  public showNotificationInfo(customMessage: string): void {
     this.notificationService.show({
       content: customMessage,
-      // cssClass: 'button-notification',
       animation: { type: 'slide', duration: 400 },
       position: { horizontal: 'center', vertical: 'bottom' },
-      type: { style: 'success', icon: true },
+      type: { style: 'info', icon: true },
       closable: true,
     });
   }
-
   public removeStudent(item) {
     const id = item.id;
-    this.studentService.deleteStudent(parseInt(id));
+
+    try {
+      this.studentService.deleteStudent(parseInt(id));
+      this.showNotificationInfo('Record removed');
+    } catch (e) {
+      this.showNotificationInfo('Error in removing record');
+    }
   }
 
   public updateStudent(item) {
@@ -166,11 +173,15 @@ export class DataGridComponent implements OnInit {
       age: parseInt(age),
     };
 
-    this.studentService.updateStudent(this.updatedStudent);
+    try {
+      this.studentService.updateStudent(this.updatedStudent);
+      this.showNotificationInfo('Record updated');
+    } catch (e) {
+      this.showNotificationInfo('Error in updating record');
+    }
   }
 
   editHandler({ sender, rowIndex, dataItem }) {
-    // define all editable fields validators and default values
     const group = new FormGroup({
       id: new FormControl(dataItem.id, Validators.required),
       name: new FormControl(dataItem.name, Validators.required),
@@ -187,19 +198,8 @@ export class DataGridComponent implements OnInit {
       ),
     });
 
-    // put the row in edit mode, with the `FormGroup` build above
     sender.editRow(rowIndex, group);
   }
-
-  // editRow(row) {
-  //   this.allStudents
-  //     .filter((row) => row.isEditable)
-  //     .map((r) => {
-  //       r.isEditable = false;
-  //       return r;
-  //     });
-  //   row.isEditable = true;
-  // }
 
   private clearForm(): void {
     this.formGroup.reset();
@@ -242,15 +242,5 @@ export class DataGridComponent implements OnInit {
 
   public get isInEditingMode(): boolean {
     return this.editedRowIndex !== undefined || this.isNew;
-  }
-
-  public calculateAge(birthdate: any): number {
-    return moment().diff(birthdate, 'years');
-  }
-
-  getAge(birthDate: Date): number {
-    const ageTilNowInMilliseconds = Date.now() - birthDate.getTime();
-    const ageDate = new Date(ageTilNowInMilliseconds);
-    return Math.abs(ageDate.getUTCFullYear() - 1970); // Because computers count the today date from the 1st of January 1970
   }
 }
