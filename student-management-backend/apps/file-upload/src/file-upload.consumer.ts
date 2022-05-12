@@ -52,7 +52,6 @@ export class UploadConsumer {
         this.allRows.push(result)
 
         this.socket.connect();
-        // this.socket.emit('joinRoom', 'active');
 
         try {
 

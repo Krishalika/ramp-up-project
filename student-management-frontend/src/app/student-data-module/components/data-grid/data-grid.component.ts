@@ -7,12 +7,12 @@ import {
   PageChangeEvent,
 } from '@progress/kendo-angular-grid';
 import { gql, Apollo } from 'apollo-angular';
-import { Student } from '../../models/student.model';
 import { StudentManagementService } from '../../services/student-management.service';
 import { StudentCreateDTO } from '../../types/student.type';
 import { NotificationService } from '@progress/kendo-angular-notification';
 import { WebSocketService } from '../../services/websocket.service';
 import { map, Observable } from "rxjs";
+import { Student } from '../../models/student.model';
 
 const Get_All_STUDENTS = gql`
   query {
@@ -105,6 +105,18 @@ export class DataGridComponent implements OnInit {
     return this.allStudents;
   }
 
+  // A simple method for the string-to-date conversion
+  private parse(json) {
+    Object.keys(json).map((key) => {
+      const date = new Date(json[key]);
+      if (!isNaN(date.getTime())) {
+        json[key] = date;
+      }
+    });
+
+    return json;
+  }
+
   public pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
     // this.loadItems(this.allStudents);
@@ -126,6 +138,8 @@ export class DataGridComponent implements OnInit {
     const dob = this.formGroup.value.dob;
     const age = this.formGroup.value.age;
 
+    // const studentToSave: Student = formGroup.value;
+ 
     this.newStudent = {
       id: parseInt(id),
       name: name,
@@ -189,7 +203,6 @@ export class DataGridComponent implements OnInit {
 
     try {
       this.studentService.updateStudent(this.updatedStudent);
-      this.showNotificationInfo('Record updated');
     } catch (e) {
       this.showNotificationInfo('Error in updating record');
     }
@@ -201,13 +214,13 @@ export class DataGridComponent implements OnInit {
       name: new FormControl(dataItem.name, Validators.required),
       gender: new FormControl(dataItem.gender, Validators.required),
       address: new FormControl(dataItem.address, Validators.required),
-      dob: new FormControl(dataItem.dob, Validators.required),
+      dob: new FormControl(new Date(dataItem.dob), Validators.required),
       age: new FormControl(dataItem.age),
       mobile: new FormControl(
         dataItem.mobile,
         Validators.compose([
           Validators.required,
-          Validators.pattern('^[0-9]{1,11}'),
+          Validators.pattern('^[0-9]{10}'),
         ])
       ),
     });

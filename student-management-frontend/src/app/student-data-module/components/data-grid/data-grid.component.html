@@ -1,4 +1,4 @@
-<kendo-grid (pageChange)="pageChange($event)" [data]="allStudents | async" (add)="addHandler($event)"
+<kendo-grid (pageChange)="pageChange($event)" [data]="allStudents | async" (add)="addHandler($event)" 
   (edit)="editHandler($event)" (cancel)="canceledHandler($event)">
 
   <ng-template kendoGridToolbarTemplate>
@@ -10,12 +10,13 @@
   <kendo-grid-column field="gender" editor="text" title="Gender"></kendo-grid-column>
   <kendo-grid-column field="address" editor="text" title="Address"></kendo-grid-column>
   <kendo-grid-column field="mobile" editor="text" title="Mobile No"></kendo-grid-column>
-  <kendo-grid-column field="dob" editor="text" title="Date of Birth"></kendo-grid-column>
+  <kendo-grid-column field="dob" editor="date" title="Date of Birth" format="D">
+  </kendo-grid-column>
   <kendo-grid-column field="age" editor="text" title="Age"></kendo-grid-column>
   <kendo-grid-column title="Command">
 
     <ng-template kendoGridCellTemplate let-isNew="isNew" let-dataItem>
-      <button kendoGridEditCommand class="btnEdit" (click)="editHandler($event)">Edit</button>
+      <button kendoGridEditCommand class="btnEdit" (click)="editHandler($event)" >Edit</button>
       <div *ngIf="isNew">
         <button kendoGridSaveCommand (click)="saveCurrent()" [disabled]="formGroup?.invalid">Add</button>
       </div>
